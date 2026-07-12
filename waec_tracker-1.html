@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0A0A0F">
+<title>WAEC Tracker</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:#0A0A0F;color:#E8E8F0;font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;}
+#app{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:90px;}
+#header{padding:44px 20px 14px;background:linear-gradient(180deg,#12121A 0%,#0A0A0F 100%);border-bottom:1px solid #1E1E2E;position:sticky;top:0;z-index:10;}
+.hrow{display:flex;justify-content:space-between;align-items:flex-start;}
+.hlabel{font-size:10px;letter-spacing:3px;color:#444;text-transform:uppercase;margin-bottom:3px;}
+.hweek{font-size:22px;font-weight:700;color:#fff;}
+.pbadge{border-radius:12px;padding:6px 14px;text-align:right;}
+.pbadge-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;}
+.pbadge-name{font-size:13px;font-weight:600;color:#fff;}
+.prow{display:flex;justify-content:space-between;font-size:11px;color:#444;margin:12px 0 5px;}
+.pbar-bg{height:5px;background:#1E1E2E;border-radius:3px;overflow:hidden;}
+.pbar-fill{height:100%;border-radius:3px;transition:width 0.5s ease;}
+#tabs{display:flex;padding:12px 16px 0;gap:8px;}
+.tab-btn{flex:1;padding:8px 0;border-radius:8px;border:none;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+#content{padding:14px 16px;}
+.wcard{background:#12121A;border:1px solid #1E1E2E;border-radius:14px;padding:14px;margin-bottom:14px;}
+.wcard-lbl{font-size:11px;color:#444;margin-bottom:5px;}
+.wcard-desc{font-size:12px;color:#777;line-height:1.5;}
+.wmini-bar{height:3px;background:#1E1E2E;border-radius:2px;margin:10px 0 5px;}
+.wmini-fill{height:100%;border-radius:2px;transition:width 0.3s;}
+.wmini-lbl{font-size:10px;color:#444;}
+.dcard{margin-bottom:8px;border-radius:13px;border:1px solid #1E1E2E;background:#0F0F18;cursor:pointer;transition:all 0.15s;user-select:none;overflow:hidden;}
+.dcard.done{background:#12121A;opacity:0.5;}
+.dcard-main{display:flex;align-items:center;gap:12px;padding:13px 14px;}
+.dicon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.dname{font-size:13px;font-weight:600;}
+.dtopic{font-size:10px;font-weight:600;margin-left:3px;}
+.dtask{font-size:11px;color:#555;margin-top:2px;line-height:1.4;}
+.dtask.sk{text-decoration:line-through;}
+.dtarget{font-size:10px;padding:3px 7px;border-radius:5px;font-weight:700;flex-shrink:0;}
+.darrow{font-size:11px;color:#333;margin-top:4px;}
+.drawer{padding:0 14px 14px;border-top:1px solid #1A1A28;}
+.drawer-inner{padding-top:12px;}
+.drawer-section{margin-bottom:12px;}
+.drawer-lbl{font-size:9px;color:#444;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
+.topic-pill{display:inline-block;font-size:11px;padding:4px 10px;border-radius:20px;margin:3px 3px 0 0;font-weight:500;line-height:1.4;}
+.freq-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:3px 9px;border-radius:10px;font-weight:700;border:1px solid;}
+.tips-text{font-size:12px;color:#777;line-height:1.6;}
+.mark-btn{display:block;width:100%;padding:10px;border-radius:9px;border:none;font-size:12px;font-weight:700;cursor:pointer;margin-top:10px;}
+.adv-btn{width:100%;padding:15px;margin-top:10px;border-radius:12px;border:none;font-size:14px;font-weight:700;cursor:pointer;}
+.shint{font-size:11px;color:#555;margin-bottom:14px;line-height:1.6;background:#12121A;border:1px solid #1E1E2E;border-radius:10px;padding:10px 12px;}
+.scard{background:#12121A;border:1px solid #1E1E2E;border-radius:13px;margin-bottom:10px;overflow:hidden;}
+.scard-top{padding:14px;}
+.srow{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.sleft{display:flex;align-items:center;gap:10px;}
+.semoji{font-size:19px;}
+.sname{font-size:14px;font-weight:600;}
+.ssess{font-size:11px;color:#444;}
+.sright{display:flex;align-items:center;gap:8px;}
+.starget{font-size:11px;font-weight:700;padding:3px 9px;border-radius:7px;}
+.splus{width:30px;height:30px;border-radius:7px;border:none;font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:300;}
+.sbar-bg{height:3px;background:#1E1E2E;border-radius:2px;}
+.sbar-fill{height:100%;border-radius:2px;transition:width 0.3s;}
+.stopics{padding:10px 14px 14px;border-top:1px solid #1E1E2E;}
+.stopics-lbl{font-size:9px;color:#444;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;}
+.htopic{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #1A1A28;}
+.htopic:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.htopic-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px;}
+.htopic-name{font-size:12px;font-weight:700;color:#ddd;flex:1;}
+.hfreq{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;flex-shrink:0;white-space:nowrap;}
+.htopic-sub{font-size:11px;color:#666;line-height:1.5;margin-bottom:3px;}
+.htip{font-size:10px;font-style:italic;line-height:1.4;}
+.phcard{background:#12121A;border:1px solid #1E1E2E;border-radius:14px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden;}
+.phbar{position:absolute;top:0;left:0;right:0;height:2px;}
+.phstatus{font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:3px;}
+.phtitle{font-size:17px;font-weight:700;}
+.phdates{font-size:11px;color:#444;margin:2px 0 10px;}
+.phdesc{font-size:12px;color:#777;line-height:1.6;}
+.phhere{margin-top:12px;padding:9px 12px;border-radius:9px;font-size:11px;}
+.nncard{background:#12121A;border:1px solid #1E1E2E;border-radius:14px;padding:18px;margin-top:4px;}
+.nntitle{font-size:13px;font-weight:600;margin-bottom:12px;}
+.nnrow{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+.nnname{font-size:12px;font-weight:600;}
+.nnrule{font-size:11px;color:#444;margin-top:1px;}
+#bbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:11px 20px;background:#0A0A0F;border-top:1px solid #1E1E2E;text-align:center;font-size:10px;color:#2a2a2a;}
+#ibanner{display:none;background:#12121A;border-bottom:1px solid #1E1E2E;padding:10px 20px;text-align:center;}
+#ibanner p{font-size:12px;color:#888;}
+#ibtn{margin-top:6px;padding:6px 16px;border-radius:8px;background:#FF6B35;color:#000;border:none;font-size:12px;font-weight:700;cursor:pointer;}
+.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%);background:#1E1E2E;color:#E8E8F0;padding:9px 18px;border-radius:18px;font-size:12px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:100;white-space:nowrap;}
+.toast.show{opacity:1;}
+
+/* ===== Loading Screen ===== */
+#loader{position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at 50% 35%,#14141F 0%,#0A0A0F 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.5s ease,visibility 0.5s ease;}
+#loader.hide{opacity:0;visibility:hidden;pointer-events:none;}
+.ld-logo-wrap{width:104px;height:104px;position:relative;display:flex;align-items:center;justify-content:center;animation:ldPop 0.7s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes ldPop{0%{transform:scale(0.4);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.ld-ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;border-top-color:#FF6B35;border-right-color:#FFD700;animation:ldSpin 1.6s linear infinite;}
+.ld-ring2{position:absolute;inset:10px;border-radius:50%;border:1px solid #1E1E2E;}
+@keyframes ldSpin{to{transform:rotate(360deg);}}
+.ld-logo-svg{width:58px;height:58px;position:relative;z-index:2;filter:drop-shadow(0 0 14px rgba(255,107,53,0.45));}
+#ld-appname{margin-top:22px;font-size:19px;font-weight:800;letter-spacing:1.5px;color:#fff;opacity:0;animation:ldFadeUp 0.6s ease 0.35s forwards;}
+#ld-appname span{color:#FF6B35;}
+#ld-tagline{margin-top:5px;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#444;opacity:0;animation:ldFadeUp 0.6s ease 0.5s forwards;}
+@keyframes ldFadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+#ld-quote-box{margin-top:34px;height:32px;max-width:300px;padding:0 24px;display:flex;align-items:center;justify-content:center;}
+#ld-quote{font-size:12.5px;color:#999;text-align:center;line-height:1.5;font-style:italic;opacity:0;animation:ldQuoteFade 1s ease forwards;}
+@keyframes ldQuoteFade{0%{opacity:0;transform:translateY(6px);}15%{opacity:1;transform:translateY(0);}85%{opacity:1;}100%{opacity:0;transform:translateY(-6px);}}
+#ld-bar-track{margin-top:24px;width:160px;height:3px;border-radius:2px;background:#1A1A28;overflow:hidden;}
+#ld-bar-fill{height:100%;width:0%;border-radius:2px;background:linear-gradient(90deg,#FF6B35,#FFD700);animation:ldBarFill 3s cubic-bezier(.2,.7,.3,1) forwards;}
+@keyframes ldBarFill{to{width:100%;}}
+
+/* ===== Profile ===== */
+#profile-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid #FF6B3566;background:#1A1A28;color:#FF6B35;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;letter-spacing:0.5px;}
+.pf-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#FF6B35,#FFD700);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#0A0A0F;flex-shrink:0;}
+.pf-head{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.pf-input{background:#12121A;border:1px solid #1E1E2E;border-radius:8px;color:#fff;font-size:14px;font-weight:700;padding:8px 10px;width:100%;margin-bottom:6px;}
+.pf-input:focus{outline:none;border-color:#FF6B3566;}
+.pf-grade-input{background:#12121A;border:1px solid #1E1E2E;border-radius:8px;color:#FFD700;font-size:11px;font-weight:600;padding:6px 10px;width:100%;}
+.pf-grade-input:focus{outline:none;border-color:#FFD70066;}
+.pf-section-lbl{font-size:10px;color:#444;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin:22px 0 10px;}
+.pstat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pstat-card{background:#12121A;border:1px solid #1E1E2E;border-radius:12px;padding:14px;}
+.pstat-val{font-size:22px;font-weight:800;color:#fff;}
+.pstat-lbl{font-size:10px;color:#555;margin-top:2px;}
+.pmastery-row{background:#12121A;border:1px solid #1E1E2E;border-radius:12px;padding:12px 14px;margin-bottom:8px;}
+.pmastery-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.pmastery-name{font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:7px;}
+.pmastery-pct{font-size:12px;font-weight:800;}
+.pmastery-bar-bg{height:5px;background:#1E1E2E;border-radius:3px;overflow:hidden;}
+.pmastery-bar-fill{height:100%;border-radius:3px;transition:width 0.4s;}
+.pmastery-sub{font-size:10px;color:#444;margin-top:6px;}
+.badge-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.badge-tile{background:#12121A;border:1px solid #1E1E2E;border-radius:12px;padding:13px 12px;text-align:center;}
+.badge-tile.unlocked{border-color:#FFD70044;background:linear-gradient(180deg,#1A1A0F,#12121A);}
+.badge-icon{font-size:24px;margin-bottom:6px;filter:grayscale(1);opacity:0.35;}
+.badge-tile.unlocked .badge-icon{filter:none;opacity:1;}
+.badge-title{font-size:11px;font-weight:700;color:#666;}
+.badge-tile.unlocked .badge-title{color:#fff;}
+.badge-desc{font-size:9.5px;color:#3a3a3a;margin-top:3px;line-height:1.4;}
+.badge-tile.unlocked .badge-desc{color:#777;}
+.pf-reset-btn{width:100%;padding:13px;border-radius:10px;border:1px solid #FF4B4B44;background:#1A0F0F;color:#FF6B6B;font-size:12.5px;font-weight:700;cursor:pointer;margin-bottom:10px;}
+.pf-reset-btn:active{background:#241212;}
+</style>
+</head>
+<body>
+<div id="loader">
+  <div class="ld-logo-wrap">
+    <div class="ld-ring"></div>
+    <div class="ld-ring2"></div>
+    <svg class="ld-logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="ldGrad" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#FF6B35"/>
+          <stop offset="1" stop-color="#FFD700"/>
+        </linearGradient>
+      </defs>
+      <path d="M50 14L92 33L50 52L8 33L50 14Z" fill="url(#ldGrad)"/>
+      <path d="M26 41V63C26 63 34 74 50 74C66 74 74 63 74 63V41" stroke="url(#ldGrad)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M88 33V54" stroke="url(#ldGrad)" stroke-width="4.5" stroke-linecap="round"/>
+      <circle cx="88" cy="60" r="4" fill="url(#ldGrad)"/>
+      <circle cx="72" cy="72" r="15" fill="#0A0A0F" stroke="url(#ldGrad)" stroke-width="3"/>
+      <path d="M65.5 72L69.5 76.5L78.5 66.5" stroke="url(#ldGrad)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div id="ld-appname">WAEC <span>TRACKER</span></div>
+  <div id="ld-tagline">Your Path to Excellence</div>
+  <div id="ld-quote-box"><div id="ld-quote">Excellence is a habit, not an act.</div></div>
+  <div id="ld-bar-track"><div id="ld-bar-fill"></div></div>
+</div>
+<div id="ibanner"><p>📲 Add to Home Screen for full offline use</p><button id="ibtn">Install App</button></div>
+<div id="app">
+  <div id="header">
+    <div class="hrow">
+      <div><div class="hlabel">WAEC Study Tracker</div><div class="hweek" id="hw">Week 1</div></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="pbadge" id="pb"><div class="pbadge-lbl" id="pbl"></div><div class="pbadge-name" id="pbn"></div></div>
+        <button id="profile-btn" onclick="openProfile()">S</button>
+      </div>
+    </div>
+    <div class="prow"><span id="opct">0% complete</span><span id="tsess">0 sessions done</span></div>
+    <div class="pbar-bg"><div class="pbar-fill" id="obar"></div></div>
+  </div>
+  <div id="tabs">
+    <button class="tab-btn" onclick="switchTab('week')" id="tab-week">This Week</button>
+    <button class="tab-btn" onclick="switchTab('subjects')" id="tab-subjects">Topics</button>
+    <button class="tab-btn" onclick="switchTab('phases')" id="tab-phases">Roadmap</button>
+    <button class="tab-btn" onclick="switchTab('tutor')" id="tab-tutor">AI Tutor</button>
+  </div>
+  <div id="content"></div>
+</div>
+<div id="bbar">Tap any session card to see exact WAEC topics · Topics tab = full list</div>
+<div class="toast" id="toast"></div>
+<div id="tutor-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,10,15,0.98);z-index:1000;overflow-y:auto;padding:20px;">
+  <div style="max-width:480px;margin:0 auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div id="tutor-title" style="font-size:18px;font-weight:700;color:#fff;">AI Tutor</div>
+      <button onclick="closeTutor()" style="background:#1E1E2E;color:#fff;border:none;padding:8px 15px;border-radius:8px;font-size:12px;cursor:pointer;">Close</button>
+    </div>
+    <div id="tutor-content"></div>
+  </div>
+</div>
+<div id="profile-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,10,15,0.98);z-index:1000;overflow-y:auto;padding:20px;">
+  <div style="max-width:480px;margin:0 auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div style="font-size:18px;font-weight:700;color:#fff;">My Profile</div>
+      <button onclick="closeProfile()" style="background:#1E1E2E;color:#fff;border:none;padding:8px 15px;border-radius:8px;font-size:12px;cursor:pointer;">Close</button>
+    </div>
+    <div id="profile-content" style="padding-bottom:40px;"></div>
+  </div>
+</div>
+
+<script>
+const TOPICS={
+  math:[
+    {t:"Number & Numeration",freq:"🔥 Every year",subs:"Indices & all 6 index laws, logarithms (using log tables), surds (simplify, rationalise), number bases (binary/octal/hex — convert between all), standard form, ratio & proportion, percentages, profit & loss, simple & compound interest",tip:"Indices + logs appear EVERY year. Know all 6 index laws cold before anything else."},
+    {t:"Algebraic Processes",freq:"🔥 Every year",subs:"Factorisation (difference of squares, grouping, trinomials), quadratic equations (factorisation + quadratic formula + completing the square), simultaneous equations (substitution + elimination), linear & quadratic inequalities, algebraic fractions, variation (direct/inverse/joint/partial)",tip:"Quadratic equations come up every single year — master ALL three solution methods."},
+    {t:"Mensuration",freq:"🔥 Every year",subs:"Area & perimeter of triangles, rectangles, circles, trapezium, parallelogram. Volume & surface area of cylinder, cone, sphere, hemisphere, frustum. Arc length & sector area. Similar shapes (area ratio = k², volume ratio = k³).",tip:"Frustum and sector area questions appear almost every year. Learn those formulas first."},
+    {t:"Trigonometry",freq:"🔥 Every year",subs:"SOH-CAH-TOA (right-angled triangles), sine rule (a/sinA = b/sinB), cosine rule (a² = b²+c²-2bc cosA), angles of elevation & depression, 3-figure bearings, graphs of sin/cos/tan, trig identities (sin²θ+cos²θ=1)",tip:"Bearings combined with sine/cosine rule is a guaranteed question. Always draw the diagram first."},
+    {t:"Statistics & Probability",freq:"🔥 Every year",subs:"Mean/median/mode for ungrouped & grouped data (frequency tables), cumulative frequency & ogive (drawing + reading), histogram (frequency density), bar chart, pie chart, range & interquartile range, probability (simple, combined, mutually exclusive, independent, tree diagrams)",tip:"Drawing the ogive and finding the median/IQR from it appears almost every year."},
+    {t:"Geometry & Circle Theorems",freq:"🔥 Every year",subs:"All 8 circle theorems: angle at centre = 2× angle at circumference; angles in same segment are equal; angle in semicircle = 90°; opposite angles of cyclic quad sum to 180°; tangent⊥radius; tangent lengths from external point are equal; alternate segment theorem; intersecting chords. Angles in polygons. Loci & construction.",tip:"You MUST know all 8 circle theorems with converses. 2–3 theorem questions per paper."},
+    {t:"Coordinate Geometry",freq:"⚡ Most years",subs:"Gradient (m = (y2-y1)/(x2-x1)), equation of a line (y=mx+c, y-y1=m(x-x1)), midpoint formula, distance formula, parallel lines (same gradient), perpendicular lines (m1×m2 = -1), distance from a point to a line",tip:"Finding the equation of a line through two given points comes up every other year."},
+    {t:"Sequences & Series",freq:"⚡ Most years",subs:"Arithmetic progression (AP): nth term = a+(n-1)d, sum = n/2(2a+(n-1)d). Geometric progression (GP): nth term = arⁿ⁻¹, sum = a(rⁿ-1)/(r-1), sum to infinity = a/(1-r) for |r|<1. Linear & quadratic sequences.",tip:"AP questions appear more than GP and are simpler. Don't skip GP — sum to infinity is tested."},
+    {t:"Sets & Logic",freq:"⚡ Most years",subs:"Venn diagrams with 2 and 3 sets (drawing + solving word problems), union (∪), intersection (∩), complement (A'), subset, universal set, cardinality. Logical reasoning: AND/OR/NOT, truth tables, conditional statements.",tip:"3-set Venn diagram word problems are almost guaranteed. Always define your regions clearly."},
+    {t:"Matrices & Transformation",freq:"⚡ Most years",subs:"Matrix addition, subtraction, multiplication (order matters), determinant of 2×2, inverse of 2×2 (using determinant), solving simultaneous equations using matrices. Transformations: reflection (in x-axis, y-axis, y=x, y=-x), rotation (90°, 180°, 270° about origin), translation (using vectors), enlargement (scale factor + centre).",tip:"Matrix multiplication and finding inverse appear frequently. Know the 2×2 inverse formula."},
+    {t:"Functions & Graphs",freq:"⚡ Most years",subs:"Domain & range, composite functions (fog, gof), inverse functions (swap x & y, solve for y), drawing quadratic & cubic graphs from tables of values, gradient of curve at a point (drawing tangent), reading off values from graphs",tip:"Drawing a quadratic graph from a given table of values is a common structured question."},
+    {t:"Calculus",freq:"⚡ Some years",subs:"Differentiation using power rule (d/dx of xⁿ = nxⁿ⁻¹), gradient of a curve at a point, finding maximum & minimum points (set dy/dx = 0), rate of change problems, basic integration (reverse of differentiation), area under a curve",tip:"Differentiation appears more than integration in WAEC. Focus on finding turning points."},
+  ],
+  physics:[
+    {t:"Mechanics — Motion",freq:"🔥 Every year",subs:"Distance vs displacement, speed vs velocity, acceleration, equations of motion (v=u+at; s=ut+½at²; v²=u²+2as; s=½(u+v)t), velocity-time graphs (area=distance, gradient=acceleration), projectile motion, Newton's 3 laws, momentum (p=mv), impulse (Ft=mv-mu), conservation of momentum",tip:"Velocity-time graph interpretation (area + gradient) and equations of motion appear EVERY year."},
+    {t:"Forces & Equilibrium",freq:"🔥 Every year",subs:"Resultant of coplanar forces (triangle/parallelogram of forces), resolution of forces (horizontal + vertical components), moment of a force (F×d), conditions for equilibrium (ΣF=0, ΣM=0), principle of moments, friction (F=μN, static vs kinetic), Archimedes' principle, upthrust, law of floatation",tip:"Moments and equilibrium of a loaded beam (finding unknown forces) is a guaranteed question."},
+    {t:"Work, Energy & Power",freq:"🔥 Every year",subs:"Work (W=Fd cosθ), kinetic energy (KE=½mv²), gravitational PE (PE=mgh), conservation of mechanical energy, power (P=W/t=Fv), efficiency (%), simple machines — lever, pulley, inclined plane, screw jack (MA=Load/Effort, VR, efficiency=MA/VR×100%)",tip:"Energy conservation problems and machine efficiency (MA, VR, efficiency) appear every year."},
+    {t:"Waves & Sound",freq:"🔥 Every year",subs:"Wave equation (v=fλ), period (T=1/f), transverse vs longitudinal waves, properties (reflection, refraction, diffraction, superposition/interference), stationary waves, resonance, speed of sound (factors affecting), echo calculations, pitch, loudness, quality/timbre, Doppler effect",tip:"v=fλ calculation and wave properties always appear on both Paper 1 and Paper 2."},
+    {t:"Light & Optics",freq:"🔥 Every year",subs:"Laws of reflection, plane mirror (image properties, lateral inversion), curved mirrors — concave & convex (focal length, principal focus, centre of curvature, ray diagrams, mirror formula 1/f=1/u+1/v, magnification m=v/u=-image height/object height), refraction (Snell's law: n=sin i/sin r), refractive index, critical angle, total internal reflection, converging & diverging lenses (ray diagrams, lens formula 1/f=1/v-1/u), optical instruments",tip:"Mirror formula and lens formula calculations appear every single year. Learn sign conventions."},
+    {t:"Electricity — Circuits",freq:"🔥 Every year",subs:"Ohm's law (V=IR), series circuits (same current, voltages add), parallel circuits (same voltage, currents add, 1/R=1/R1+1/R2+...), EMF & internal resistance (E=V+Ir, terminal voltage V=E-Ir), electrical power (P=IV=I²R=V²/R), electrical energy (E=Pt=VIt), Kirchhoff's current & voltage laws, potential divider",tip:"Internal resistance questions (finding terminal voltage) appear almost every year. Master this."},
+    {t:"Electromagnetic Induction",freq:"⚡ Most years",subs:"Faraday's law of induction, Lenz's law (opposing the change), factors affecting induced EMF (speed, number of turns, field strength), transformer (Vs/Vp=Ns/Np, efficiency, power loss), AC generator (working principle), DC motor vs generator difference",tip:"Transformer calculation (voltage, turns ratio, efficiency) appears almost every year."},
+    {t:"Heat & Thermodynamics",freq:"⚡ Most years",subs:"Temperature scales: Celsius, Kelvin (K=°C+273), Fahrenheit. Specific heat capacity (Q=mcΔT). Specific latent heat (Q=mL, latent heat of fusion vs vaporisation). Gas laws: Boyle's (PV=k), Charles's (V/T=k), Pressure law (P/T=k), Combined gas law (PV/T=k). Linear & volume expansion.",tip:"Latent heat calculation (Q=mL) and gas law calculations appear most years."},
+    {t:"Magnetism & Electromagnetism",freq:"⚡ Most years",subs:"Magnetic field patterns (bar magnet, current-carrying wire, solenoid), magnetic materials (ferromagnetic, paramagnetic, diamagnetic), permanent vs temporary magnets, electromagnets, force on current in magnetic field (F=BIL), Fleming's left-hand rule (motor effect), Fleming's right-hand rule (generator effect)",tip:"Fleming's left vs right hand rules and which one applies where appear almost every year."},
+    {t:"Modern Physics",freq:"⚡ Most years",subs:"Photoelectric effect (Einstein's equation E=hf=work function+½mv²max), wave-particle duality, atomic structure (Rutherford/Bohr models), radioactivity (alpha/beta/gamma — nature, properties, penetrating power), radioactive decay equations, half-life (N=N₀(½)^(t/T½)), uses & dangers of radioactivity, nuclear fission & fusion",tip:"Half-life calculation and nuclear decay equations appear most years. Practice both types."},
+    {t:"Simple Machines",freq:"⚡ Some years",subs:"Types: lever (classes 1,2,3), pulleys (single fixed, single movable, block & tackle), inclined plane, wheel & axle, screw jack. Mechanical advantage (MA=Load/Effort). Velocity ratio (VR = distance effort moves / distance load moves). Efficiency = (MA/VR)×100%. Relationship between MA, VR, efficiency.",tip:"MA and VR definitions and efficiency calculation appear in most years. Know all machine types."},
+  ],
+  chemistry:[
+    {t:"Atomic Structure & Periodic Table",freq:"🔥 Every year",subs:"Protons/neutrons/electrons, atomic number, mass number, isotopes, electronic configuration (s, p, d notation), valence electrons, periods & groups, trends: atomic radius (decreases across period, increases down group), ionisation energy (increases across period), electronegativity (increases across period), reactivity of metals (decreases across period), reactivity of non-metals (increases across period)",tip:"Electronic configuration and periodic trends appear EVERY year. Know Groups I, II, VII, and 0 in detail."},
+    {t:"Chemical Bonding",freq:"🔥 Every year",subs:"Ionic bonding (metal + non-metal, electron transfer, giant ionic lattice), covalent bonding (non-metal + non-metal, electron sharing, simple molecular/giant covalent), metallic bonding (sea of electrons), hydrogen bonding, van der Waals forces. Dot-and-cross diagrams. VSEPR theory (shapes: linear, trigonal planar, tetrahedral, bent, pyramidal). Bond polarity & electronegativity.",tip:"Drawing dot-and-cross diagrams for molecules (H2O, NH3, CO2, CH4, HCl) appears almost every paper."},
+    {t:"Acids, Bases & Salts",freq:"🔥 Every year",subs:"Properties of acids (H⁺ ions) & bases (OH⁻ ions), pH scale (0-14), strong vs weak acids/bases, neutralisation reaction, preparation of salts (direct combination, neutralisation, precipitation/double decomposition, titration), solubility rules (remember: all nitrates soluble; most chlorides soluble except AgCl, PbCl2; sulphates mostly soluble except BaSO4, PbSO4), indicators (litmus, phenolphthalein, methyl orange)",tip:"Titration calculation (moles = concentration × volume in dm³) appears every single year."},
+    {t:"Redox & Electrochemistry",freq:"🔥 Every year",subs:"Oxidation (loss of electrons, increase in oxidation state), reduction (gain of electrons, decrease in oxidation state), OIL RIG, oxidation states (rules + calculating), oxidising & reducing agents, half-equations (ionic), electrolysis — electrolytic cell setup, products at anode & cathode (factors: position in series, concentration, electrode type), Faraday's laws, simple electrochemical cells, standard electrode potentials, corrosion of iron & rusting, sacrificial protection, galvanising",tip:"Writing half-equations and predicting electrolysis products appear every year."},
+    {t:"Energetics",freq:"⚡ Most years",subs:"Exothermic reactions (ΔH negative, energy released) vs endothermic (ΔH positive, energy absorbed), standard enthalpy changes (combustion, formation, neutralisation), Hess's law (energy cycles), bond energy calculations (energy in = bonds broken; energy out = bonds made; ΔH = energy in - energy out), activation energy, energy profile diagrams, effect of catalyst on activation energy",tip:"Hess's law energy cycle and bond energy calculation appear most years. Draw the cycle neatly."},
+    {t:"Rates of Reaction & Equilibrium",freq:"⚡ Most years",subs:"Factors affecting rate: temperature (collision theory), concentration, surface area, catalyst, light. Measuring rate (volume of gas/time, mass loss/time, colour change). Reversible reactions (⇌), dynamic equilibrium, Le Chatelier's principle (effect of changing temperature/pressure/concentration), Kc expression (products over reactants), Haber process (N2+3H2⇌2NH3: conditions 450°C, 200 atm, iron catalyst), Contact process for H2SO4",tip:"Le Chatelier's principle applied to industrial processes appears almost every year."},
+    {t:"Organic Chemistry",freq:"🔥 Every year",subs:"Homologous series: alkanes (CnH2n+2, single bonds, substitution), alkenes (CnH2n, double bond, addition reactions), alkynes (CnH2n-2, triple bond), alcohols (-OH, fermentation, oxidation to carboxylic acid), carboxylic acids (-COOH, esterification), esters (smell, formation). IUPAC naming (prefix: meth/eth/prop/but/pent). Isomerism (structural: chain, position, functional group; geometric: cis/trans). Addition polymerisation (ethene→poly(ethene)). Condensation polymerisation (nylon, polyester). Tests for functional groups.",tip:"IUPAC naming + drawing structural formulae + identifying functional groups appear EVERY year."},
+    {t:"Metals & Extraction",freq:"⚡ Most years",subs:"Reactivity series (K Na Ca Mg Al Zn Fe Pb H Cu Ag Au — KNCMAZFLHCAA). Methods of extraction depend on position: electrolysis (K,Na,Ca,Mg,Al — too reactive for carbon reduction), reduction by carbon/coke (Zn,Fe,Pb), found native (Cu,Ag,Au). Extraction of iron (blast furnace reactions), aluminium (Hall-Héroult process, cryolite). Properties & uses of iron/steel, aluminium, copper. Alloys (brass, bronze, stainless steel).",tip:"Why different metals need different extraction methods is a guaranteed theory question."},
+    {t:"Non-metals & Gas Preparation",freq:"⚡ Most years",subs:"Properties & uses of: oxygen, nitrogen, sulphur, chlorine, hydrogen. Laboratory preparation of gases with apparatus, chemical equation, drying agent, collection method (upward/downward displacement, over water), test: O2 (relights glowing splint), H2 (squeaky pop), CO2 (limewater turns milky), Cl2 (bleaches litmus), NH3 (turns moist red litmus blue), HCl (white fumes with ammonia). Water treatment (filtration, sedimentation, chlorination).",tip:"Lab preparation of gases (apparatus + equation + test) appears in almost every exam."},
+    {t:"Environmental Chemistry",freq:"⚡ Some years",subs:"Greenhouse gases (CO2, CH4, N2O, water vapour) → global warming → effects (sea level rise, extreme weather). Acid rain (SO2 + NO2 from combustion → H2SO4 + HNO3 in rain → damages ecosystems, buildings, health). Ozone depletion (CFCs destroy ozone layer → increased UV). Water pollution (fertiliser run-off → eutrophication → algal bloom → deoxygenation). Biodegradable vs non-biodegradable waste.",tip:"Causes and effects of acid rain and global warming appear as theory questions most years."},
+  ],
+  english:[
+    {t:"Comprehension",freq:"🔥 Every year",subs:"Reading unseen passages carefully, answering in complete sentences, inferring implied meaning, identifying tone (formal/informal/ironic/humorous/serious), mood, writer's attitude and purpose, vocabulary in context (use surrounding words to infer meaning), answering 'in your own words' questions",tip:"Read ALL questions before reading the passage. Answers come in the order of the text. Never copy — paraphrase."},
+    {t:"Summary Writing",freq:"🔥 Every year",subs:"Identifying ONLY main points (not examples, illustrations, or explanations), rewriting in your own words (no copying from the passage), staying strictly within the word limit (usually 80–100 words including your title), accurate word counting, using a clear topic sentence to frame your summary",tip:"Going over the word limit costs marks. Count carefully. Write draft first, then cut to fit."},
+    {t:"Essay Writing",freq:"🔥 Every year",subs:"Argumentative (pick a side, give evidence, counter-argue), narrative (story with plot, characters, setting, climax, resolution), descriptive (vivid sensory detail), expository (explain + inform). Formal letter (date, address, salutation, body, closing). Informal letter. Speech writing (address audience, persuasive language). Report writing (headings, factual, formal). Article writing.",tip:"Always plan for 2 minutes before writing. Structure: intro → 3 body paragraphs → conclusion. Never start mid-argument."},
+    {t:"Lexis & Structure — Objective",freq:"🔥 Every year",subs:"Fill-in-the-blank with correct grammatical form (tense, concord, articles), sentence completion, choosing the correct word from options, antonyms, synonyms, phrasal verbs (common ones: give up, look into, run out of, put off, bring about), idioms (in hot water, on the fence, under the weather), subject-verb agreement (concord), correct preposition use",tip:"Concord (subject-verb agreement) and tense questions are the most common objective items. Study irregular verbs."},
+    {t:"Oral English & Phonology",freq:"🔥 Every year",subs:"20 vowel sounds of English (12 monophthongs: /iː/ /ɪ/ /e/ /æ/ /ɑː/ /ɒ/ /ɔː/ /ʊ/ /uː/ /ʌ/ /ɜː/ /ə/; 8 diphthongs: /eɪ/ /aɪ/ /ɔɪ/ /aʊ/ /əʊ/ /ɪə/ /eə/ /ʊə/). 24 consonant sounds. Word stress (rules: usually 2nd syllable for verbs, 1st for nouns). Sentence stress. Rhyme. Intonation (rising for questions, falling for statements). Silent letters (knife, gnome, psalm). IPA transcription.",tip:"Word stress and identifying vowel sounds appear EVERY year. Memorise all 20 vowel sounds."},
+    {t:"Figures of Speech",freq:"⚡ Most years",subs:"Simile (comparison using 'like' or 'as'), metaphor (direct comparison), personification (giving human qualities to non-human), hyperbole (deliberate exaggeration), alliteration (repetition of initial consonant sounds), assonance (repetition of vowel sounds), onomatopoeia (sound words), oxymoron (contradictory terms), irony (saying the opposite of what you mean), euphemism (mild substitute for harsh word), synecdoche (part for whole), metonymy",tip:"Identifying and naming figures of speech from given sentences appears most years. Learn all definitions + one example each."},
+    {t:"Sentence Structure & Grammar",freq:"⚡ Most years",subs:"Parts of speech (noun, pronoun, verb, adjective, adverb, preposition, conjunction, interjection), phrase vs clause vs sentence, types of sentences (simple, compound, complex, compound-complex), active voice vs passive voice (conversion), direct speech vs reported/indirect speech (tense shifts, pronoun changes, time expression changes), question tags",tip:"Converting direct speech to reported speech appears almost every year. Master all tense shifts."},
+    {t:"Vocabulary & Register",freq:"⚡ Most years",subs:"Commonly confused words (affect/effect, principal/principle, complement/compliment, stationary/stationery, lose/loose, accept/except, council/counsel), homophones, collocations (common word partners), formal vs informal register (choosing appropriate language for context), technical vocabulary of different fields",tip:"Keep a personal list of words you confuse or misspell. Review it every day for 5 minutes."},
+  ],
+  techDrawing:[
+    {t:"Geometric Construction",freq:"🔥 Every year",subs:"Bisecting a line (perpendicular bisector), bisecting an angle, constructing perpendicular from a point to a line, constructing angles (30°, 45°, 60°, 90°, 120°) without a protractor, constructing regular polygons: equilateral triangle, square, regular pentagon, hexagon, heptagon, octagon. Inscribing & circumscribing circles in/about polygons. All using compass and straight edge only.",tip:"Constructing a regular hexagon and regular pentagon appear almost every year. Practice until automatic."},
+    {t:"Plane Geometry",freq:"🔥 Every year",subs:"Properties of triangles (equilateral, isosceles, scalene, right-angled), quadrilaterals (square, rectangle, parallelogram, rhombus, trapezium, kite), regular & irregular polygons. Dividing a line into equal parts (using parallel lines — not measurement). Enlargement & reduction of plane figures to a given ratio. Finding areas by geometric methods (triangle, quadrilateral).",tip:"Dividing a line into equal parts by construction (not by measuring) is a guaranteed question."},
+    {t:"Orthographic Projection",freq:"🔥 Every year",subs:"First angle (European) projection — object between viewer and plane. Third angle (American) projection — plane between viewer and object. Drawing front elevation (FE), side elevation (SE/EE), and plan from a 3D object. Interpreting given views to reconstruct solid. Hidden detail (dashed lines). Centre lines (chain-dash). Arrangement of views in each system.",tip:"Orthographic projection is the MOST tested topic. Spend maximum time here. Know both 1st and 3rd angle symbols."},
+    {t:"Isometric & Oblique Drawing",freq:"🔥 Every year",subs:"Isometric drawing: all vertical lines remain vertical; horizontal lines at 30° to horizontal. Drawing boxes, cylinders, combined solids. Oblique drawing: cavalier (full depth, 45°), cabinet (half depth, 45°). Converting between 2D orthographic views and 3D pictorial. Reading 3D drawings to extract dimensions.",tip:"Isometric drawing from three given orthographic views appears every year. Use isometric dot paper for practice."},
+    {t:"Loci & Conic Sections",freq:"⚡ Most years",subs:"Definition of a locus. Common loci: equidistant from two points (perpendicular bisector), equidistant from two lines (angle bisector), fixed distance from a point (circle), fixed distance from a line (parallel line). Ellipse: trammel method, concentric circle method, focal-chord method. Parabola: focus-directrix method. Hyperbola. Applications of conics.",tip:"Ellipse by trammel method appears most years and is the easiest. Practice the physical trammel technique."},
+    {t:"Surface Development",freq:"⚡ Most years",subs:"Surface development (unfolding/net) of: right prism (rectangle + base), cylinder (rectangle + circles), right pyramid (triangles + base), cone (sector + base circle — slant height = radius of sector), oblique & truncated solids. Transition pieces (square to circle). Finding true shape of oblique sections.",tip:"Development of a right cone and truncated cylinder appear almost every year. Learn the cone sector formula."},
+    {t:"Sectional Views",freq:"⚡ Most years",subs:"Full section (cut all the way through), half section (cut only half — for symmetrical objects), revolved section, removed section. Cutting plane line (chain-dash with arrows). Section hatching (parallel lines at 45°, 3-4mm apart). Parts NOT hatched: shafts, bolts, nuts, ribs, keys, webs. Drawing a sectional view from given orthographic views.",tip:"Full sectional view with correct hatching and unhatched parts appears almost every year."},
+    {t:"Dimensioning & Conventions",freq:"⚡ Most years",subs:"Types of lines: continuous thick (visible outline), continuous thin (dimension/projection), dashed thin (hidden detail), chain-dash thin (centre line), chain-dash with arrows (cutting plane). Dimension lines: arrowheads, extension lines, figures above the line. Standard symbols: Ø (diameter), R (radius), SQ (square). Title block contents. Scale notation.",tip:"Correct line types and proper dimensioning rules are tested almost every year. Never guess the standard."},
+    {t:"Screw Threads & Fastenings",freq:"⚡ Some years",subs:"Conventional (not true helix) representation of external and internal screw threads. Types: V-thread (unified, metric), square thread, buttress, ACME. Assembly drawing showing bolt + nut + washer. Standard drawing conventions for threads in section and elevation. Locking devices.",tip:"WAEC tests conventional representation only (not the true spiral helix). Learn the standard line conventions."},
+    {t:"Freehand Sketching",freq:"⚡ Some years",subs:"Freehand sketching without instruments. Sketching in isometric and oblique. Proportioning objects correctly by eye. Line quality (varying pressure for thick/thin). Sketching cylinders and curved features. Annotating sketches with dimensions and notes. Communication of design ideas.",tip:"Marked on proportion and clarity — not perfection. Practise with a thick pencil (2B) for confidence."},
+  ],
+  ict:[
+    {t:"Computer Fundamentals",freq:"🔥 Every year",subs:"Definition & characteristics of a computer (speed, accuracy, diligence, versatility, storage, automatic). Generations: 1st (vacuum tubes, machine language), 2nd (transistors, assembly language), 3rd (ICs, high-level languages), 4th (microprocessors, GUI), 5th (AI, neural networks). Types by size: microcomputer, minicomputer, mainframe, supercomputer. Types by function: analog, digital, hybrid.",tip:"Generations of computers + their characteristics appear every year as theory questions."},
+    {t:"Computer Hardware",freq:"🔥 Every year",subs:"CPU: ALU (arithmetic & logic operations), CU (control unit — fetches & executes instructions), registers (fast temporary storage), cache memory. Input devices: keyboard, mouse, scanner, joystick, light pen, OMR (Optical Mark Reader), OCR (Optical Character Reader), BCR (barcode reader), webcam, microphone, touchscreen. Output devices: monitor (CRT/LCD/LED/OLED), printer (impact: dot matrix; non-impact: inkjet/laser), plotter, speakers. Storage: RAM (volatile, temporary), ROM (non-volatile, permanent — BIOS), HDD, SSD, optical discs (CD/DVD/Blu-ray), flash drive, memory card.",tip:"Classifying devices as input/output/storage with specific examples is almost guaranteed every year."},
+    {t:"Computer Software",freq:"🔥 Every year",subs:"System software: OS, device drivers, utility programs (antivirus, disk defragmenter, file manager, compression). Application software: word processor, spreadsheet, DBMS, presentation, web browser, email client, graphics, games. Programming languages: machine language (1st gen, binary), assembly language (2nd gen, mnemonics), high-level languages (3rd gen: BASIC, COBOL, FORTRAN, Pascal, C; 4th gen: SQL; 5th gen: Prolog). Translator programs: compiler (translates entire program at once), interpreter (translates line by line), assembler (translates assembly to machine code).",tip:"Difference between compiler and interpreter appears every year. State BOTH definitions clearly."},
+    {t:"Number Systems & Data Representation",freq:"🔥 Every year",subs:"Denary (base 10), binary (base 2), octal (base 8), hexadecimal (base 16). Converting between all bases (binary↔denary: repeated division/sum of powers; denary↔hex; binary↔octal in groups of 3; binary↔hex in groups of 4). Binary arithmetic: addition (0+0=0, 0+1=1, 1+1=10, 1+1+1=11), subtraction using 2's complement, multiplication. BCD (Binary Coded Decimal). ASCII character codes. Representing negative numbers: sign-and-magnitude, 1's complement, 2's complement.",tip:"Number base conversion appears EVERY year. Practice converting denary↔binary↔hex daily."},
+    {t:"Operating Systems",freq:"⚡ Most years",subs:"Functions of OS: memory management, process management, file management, device management, user interface, security. Types: single-user vs multi-user; single-tasking vs multi-tasking; batch processing (jobs queued, no interaction), real-time (immediate response — airline booking), time-sharing (multiple users share CPU time), distributed (multiple computers). Popular OSes: Windows, Linux/Ubuntu, macOS, Android, iOS, Chrome OS. Booting process (POST, BIOS, loading OS).",tip:"Functions of an operating system listed clearly and types of processing (batch/real-time) appear most years."},
+    {t:"Productivity Software",freq:"⚡ Most years",subs:"MS Word: formatting (font, paragraph, styles, headers/footers, page numbering), tables (insert, merge cells, sort), mail merge, spell check, track changes. MS Excel: cell referencing — relative (A1), absolute ($A$1), mixed. Functions: SUM, AVERAGE, MAX, MIN, COUNT, COUNTA, IF, SUMIF, VLOOKUP. Charts: bar, line, pie, scatter. Sorting & filtering data. MS PowerPoint: slide layouts, transitions, animations, master slide. MS Access: tables, forms, queries, reports.",tip:"Excel cell referencing (absolute vs relative) and IF function appear most years. Know exactly when to use $$."},
+    {t:"Internet & Computer Networks",freq:"🔥 Every year",subs:"Internet (global WAN), intranet (private internal network), extranet (restricted access intranet for partners). WWW vs internet. Web browsers (Chrome, Firefox, Edge). Search engines (Google, Bing). URL structure (protocol://domain.extension/path). HTTP vs HTTPS. Email (CC, BCC, attachment, spam, phishing). Protocols: TCP/IP, FTP, SMTP, POP3, IMAP. Types of networks: LAN (within building), WAN (large geographical area), MAN (city), PAN (personal devices). Topologies: bus, star, ring, mesh, hybrid — advantages & disadvantages. Network devices: router, switch, hub, modem, access point, NIC. IP address, DNS, bandwidth.",tip:"Network topologies with advantages/disadvantages and internet vs intranet appear every year."},
+    {t:"Computer Security & Ethics",freq:"⚡ Most years",subs:"Threats: viruses (attach to programs), worms (self-replicating, no host needed), trojans (disguised as legitimate), ransomware (encrypts files, demands ransom), spyware, adware, phishing (fake websites/emails to steal data), hacking, identity theft, cyberbullying, software piracy. Protection: antivirus software, firewall (monitors traffic), encryption, strong passwords, two-factor authentication, regular backups, software updates. Computer ethics: copyright law, intellectual property, privacy, acceptable use policy.",tip:"Types of malware (virus vs worm vs trojan — key differences) and protection methods appear almost every year."},
+    {t:"Database Concepts",freq:"⚡ Some years",subs:"Database vs flat file (advantages: reduced redundancy, data integrity, sharing, security). DBMS examples: MS Access, MySQL, Oracle. Table, record (row), field (column), data types (text, number, date, Boolean, memo). Primary key (unique identifier), foreign key (links tables). Relationships: one-to-one, one-to-many, many-to-many. SQL basics: SELECT fields FROM table WHERE condition ORDER BY field. Data validation.",tip:"Primary key vs foreign key and the purpose of a database over flat files appear most years."},
+    {t:"Programming & Algorithms",freq:"⚡ Some years",subs:"Algorithm: definition (finite, unambiguous, effective, has input & output). Flowchart symbols: oval/rounded rectangle (terminal — start/stop), rectangle (process), parallelogram (input/output), diamond (decision — yes/no branches), circle (connector). Pseudocode: structured English. Programming constructs: sequence, selection (IF...THEN...ELSE...ENDIF), iteration (FOR...NEXT, WHILE...DO...ENDWHILE, REPEAT...UNTIL). Tracing a program (dry run, trace table).",tip:"Drawing a correct flowchart for a given problem appears almost every year. Know every symbol shape and its meaning."},
+  ],
+  geography:[
+    {t:"Map Reading & Interpretation",freq:"🔥 Every year",subs:"Topographic maps: contour lines (shape of land — V upstream means river, V downhill means spur; contour interval; reading elevation), identifying relief features (hill, ridge, valley, spur, escarpment, col/saddle, plateau, depression). Cross-section drawing from contour map (plot each contour crossing + join smoothly). Grid references: 4-figure (for grid square), 6-figure (for a point). Scale: representative fraction (RF), statement scale, linear scale — calculating actual distances. Direction: 8-point compass, 3-figure bearings. Conventional signs & symbols.",tip:"Drawing a cross-section from a contour map is almost always on Paper 1. Practise this technique repeatedly."},
+    {t:"Atmospheric Processes & Climate",freq:"🔥 Every year",subs:"Composition of atmosphere (nitrogen 78%, oxygen 21%, argon/CO2/others 1%). Insolation (incoming solar radiation) — factors affecting: angle of sun, day length, distance from sun, cloud cover, altitude. Temperature: diurnal range, annual range, factors affecting (latitude, altitude, distance from sea, ocean currents, prevailing winds, vegetation). Atmospheric pressure: pressure belts — ITCZ (equatorial low), subtropical highs (30°N/S), subpolar lows (60°N/S), polar highs. Winds: trade winds, westerlies, polar easterlies, monsoons, sea/land breezes. Humidity, condensation, clouds (cumulus/stratus/cirrus/nimbus). Precipitation types: convectional, orographic/relief, frontal/cyclonic.",tip:"Drawing and interpreting a climate graph (bar chart for rainfall + line graph for temperature) appears every year."},
+    {t:"West African Climate & Vegetation",freq:"🔥 Every year",subs:"Climate zones of West Africa: equatorial (south coast — hot & wet year-round, 2000mm+ rain, no dry season), tropical/Guinea (seasonal — 2 rainy seasons near equator, 1 further north), tropical continental/Sudan (1 rainy season, long dry season, 500-1000mm), Sahel (semi-arid, 250-500mm, very long dry season), Sahara (desert, <250mm). Vegetation: tropical rainforest (multi-layered, dense, evergreen), Guinea savanna (tall grasses + scattered trees), Sudan savanna (shorter grasses, more trees), Sahel (sparse thorny scrub), mangrove (coastal swamps, stilt roots). Factors affecting vegetation: rainfall, temperature, soils, human activity.",tip:"The climate zones of West Africa with rainfall amounts, seasons, and vegetation is a guaranteed long-answer question."},
+    {t:"Population Geography",freq:"🔥 Every year",subs:"Population distribution (where people live — uneven) vs density (people per km²). Factors: physical (relief, climate, soils, water, resources), human (economic opportunities, transport, history, political). Population growth: birth rate (per 1000), death rate (per 1000), natural increase rate, total fertility rate, demographic transition model (4 stages). Population pyramids: broad base = high birth rate + high death rate (developing countries); narrow base = low birth rate (developed countries). Migration: types (internal/international, voluntary/forced, rural-urban/urban-rural), push & pull factors, effects on source & destination areas. Census: definition, purpose, problems in developing countries.",tip:"Reading a population pyramid and explaining migration causes and effects appear almost every year."},
+    {t:"Economic Activities — Agriculture",freq:"🔥 Every year",subs:"Types of farming: subsistence (for family use), shifting cultivation (move after soil exhaustion), bush fallowing (rest period), pastoral nomadism (following water/grass), commercial farming (large-scale for market), plantation (large-scale, single crop, export), mixed farming, intensive vs extensive. Major crops of West Africa: cocoa (Ghana, Côte d'Ivoire, SW Nigeria — climate: hot wet, 1250-1500mm, well-drained loamy soil — uses: chocolate, beverages — problems: swollen shoot disease, low prices), groundnut (northern Nigeria, Senegal, Guinea — sandy soils, 500-1000mm — uses: oil, cake, flour), cotton, rubber, oil palm, yam, cassava, maize, rice. Problems of agriculture in West Africa. Green Revolution. Land tenure systems.",tip:"Cocoa and groundnut farming in West Africa — climate requirements, problems, trade — appears every year."},
+    {t:"Landforms & Geomorphic Processes",freq:"⚡ Most years",subs:"Weathering: physical (mechanical — freeze-thaw/frost action, exfoliation/onion-skin weathering, block disintegration), chemical (solution, hydrolysis, carbonation, oxidation), biological (roots, animals, organisms). Mass movement: soil creep, earthflow, mudflow, landslide, rockfall. River processes: erosion (hydraulic action, corrasion/abrasion, attrition, solution/corrosion), transportation (traction, saltation, suspension, solution), deposition (where velocity decreases). River landforms: V-shaped valley, waterfall, rapids, meander (formation), oxbow lake, flood plain, levee, delta (arcuate, bird's-foot, cuspate). Coastal processes + landforms: cliff, wave-cut platform, headland & bay, stack, stump, arch; beach, spit, bar, tombolo, lagoon.",tip:"River landforms with their full formation processes appear most years — draw diagrams to explain."},
+    {t:"Mining & Industry",freq:"⚡ Most years",subs:"Mineral resources of West Africa: crude oil/petroleum (Nigeria — Niger Delta, Bonny, Warri; export, foreign exchange, environmental pollution), gold (Ghana — Obuasi; South Africa), bauxite/aluminium (Guinea — world's largest reserves; Ghana), tin (Jos Plateau, Nigeria), iron ore (Sierra Leone, Liberia, Guinea), coal (Enugu, Nigeria), phosphates (Morocco, Tunisia). Petroleum industry: exploration (seismic survey), drilling, refining (distillation), petrochemicals, OPEC. Industrialisation in West Africa: factors (raw materials, power, labour, capital, transport, market, government policy), types (primary, secondary, tertiary), problems (capital, technology, infrastructure). Industrial estates.",tip:"Petroleum industry in Nigeria (production, benefits, environmental problems) appears every year for Nigerian candidates."},
+    {t:"Settlement Geography",freq:"⚡ Most years",subs:"Types: rural settlements (villages, hamlets — dispersed, nucleated, linear patterns) vs urban settlements (towns, cities). Urbanisation: definition, rate of urban growth in West Africa, causes (rural-urban migration, natural increase), consequences — positive (economic growth, services) & negative (slums/shanties, unemployment, crime, traffic congestion, pollution, strain on services). Urban land use zones: CBD, industrial zone, residential zone, urban fringe. Problems of rapid urbanisation: housing, sanitation, water supply, transport. Major cities of West Africa: Lagos, Accra, Abidjan, Dakar, Ibadan, Kano.",tip:"Urbanisation problems in West African cities and their solutions appear almost every year."},
+    {t:"Transport & Trade",freq:"⚡ Some years",subs:"Types of transport: road (most common in West Africa — advantages: flexible, door-to-door; disadvantages: accidents, road quality), rail (bulk goods — iron ore, coal; declining in West Africa), water (river, lake, coastal, ocean), air (fast, expensive), pipeline (petroleum, gas). Factors affecting transport development: relief, climate, population, wealth, government policy. World trade patterns: terms of trade (developing countries export primary products at low prices, import manufactured goods at high prices). ECOWAS: aims (economic integration, free trade, common currency, political cooperation), achievements, problems. Balance of trade & balance of payments.",tip:"ECOWAS aims, achievements, and problems + importance of transport to development appear most years."},
+    {t:"Environmental Issues",freq:"⚡ Most years",subs:"Desertification in the Sahel: causes (overgrazing, deforestation, overcultivation, drought, population pressure), effects (loss of farmland, famine, migration), control (afforestation/reforestation, windbreaks/shelterbelts, contour ploughing, irrigation). Deforestation: causes, effects (soil erosion, biodiversity loss, flooding, climate change), conservation measures. Soil erosion types: splash erosion, sheet erosion, rill erosion, gully erosion — causes, effects, control (terracing, cover crops, contour ploughing). Oil pollution in Niger Delta: causes, effects, cleanup. Flooding: causes, effects, prevention.",tip:"Causes, effects, and control measures of desertification + soil erosion appear almost every year."},
+  ],
+  civic:[
+    {t:"Citizenship & Civic Rights",freq:"🔥 Every year",subs:"Definition of citizenship. Ways of acquiring: by birth (jus soli — born in country; jus sanguinis — born to citizen parent), by naturalisation (residing for specified years, good character, language), by registration (marriage to citizen), by descent. Rights of citizens: civil/personal rights (life, liberty, fair trial, privacy, free speech, religion), political rights (vote, stand for election), economic rights (work, own property), social rights (education, health, housing). Duties: pay taxes, obey laws, defend nation, vote, respect others. Loss of citizenship: renunciation, deprivation. Civic virtues: patriotism, honesty, respect, tolerance, responsibility.",tip:"Methods of acquiring citizenship and the rights AND duties of citizens appear every year."},
+    {t:"Democracy & Governance",freq:"🔥 Every year",subs:"Democracy: definition (Lincoln: government of, by, for the people), types (direct democracy — ancient Athens, referenda; representative/indirect — modern states). Principles: popular sovereignty, majority rule with minority rights, rule of law, free & fair elections, separation of powers, checks & balances, protection of fundamental rights, independent judiciary, free press. Constitutionalism: definition, importance, types of constitution (written/unwritten, rigid/flexible, federal/unitary). Federal system: division of power between central & state governments. Unitary system: power concentrated at centre. Confederal system: weak central government.",tip:"Features of democracy and the principle of separation of powers with checks and balances appear in almost every exam."},
+    {t:"Nigerian Constitution & Government",freq:"🔥 Every year",subs:"Constitutional history: 1914 (amalgamation), 1922 (Clifford Constitution — limited franchise), 1946 (Richards — consultative), 1951 (Macpherson — quasi-federal), 1954 (Lyttleton — full federal), 1960 (Independence Constitution), 1963 (Republican Constitution), 1979 (presidential, civilian), 1989 (Babangida — aborted), 1999 (current constitution — presidential federal republic). 1999 Constitution features: presidential system, federal, written, rigid, supremacy of constitution. Three tiers: federal (36 states + FCT), state (local governments), local government (774 LGAs). Three arms: executive (president/governor/chairman), legislature (National Assembly/State House of Assembly/LGA council), judiciary (Supreme Court → Court of Appeal → Federal/State High Courts). Fundamental human rights (Chapter IV, Sections 33–46): right to life, dignity, personal liberty, fair hearing, private and family life, freedom of thought/conscience/religion, expression/press/peaceful assembly/association, movement, freedom from discrimination, right to property.",tip:"Chapter IV fundamental rights (what they are + which sections) appear every year without fail."},
+    {t:"The Legislature",freq:"⚡ Most years",subs:"National Assembly: Senate (109 senators — 3 per state + 1 for FCT; 6-year term) + House of Representatives (360 members; 4-year term). Functions: law-making (reading stages: first — introduction & title; second — debate principles; committee stage — detailed scrutiny; third — final vote; presidential assent), oversight (checks executive), appropriation (approves budget), ratification (treaties, appointments), impeachment. Qualifications for senators & reps. State House of Assembly. Legislative immunity (Section 60). Quorum.",tip:"Functions of the National Assembly and the stages of a bill into law appear most years."},
+    {t:"The Executive",freq:"⚡ Most years",subs:"President: qualifications (Nigerian citizen, 35+ years, secondary education minimum, INEC registered), powers (executive, legislative — assent to bills, emergency powers, appointment powers, foreign affairs), impeachment process (2/3 majority Senate/Reps). Vice President: acting president when president incapacitated. Federal Executive Council (FEC)/Cabinet: ministers, Federal Ministries, parastatals. Civil service: characteristics (permanence, anonymity, neutrality, impartiality), functions, problems (corruption, inefficiency, political interference), reforms. Independent bodies: INEC, EFCC, ICPC, NPC, NCC, FRSC.",tip:"Roles of President vs Governor vs LGA Chairman is a common comparison question."},
+    {t:"The Judiciary",freq:"⚡ Most years",subs:"Hierarchy of courts: Supreme Court (highest — final appellate jurisdiction, original jurisdiction on inter-state disputes) → Court of Appeal → Federal High Court / State High Court → Magistrate Court / Customary Court of Appeal → Magistrate/District Court → Customary/Area Court. Appointment: Supreme Court justices by President on NJC recommendation, confirmed by Senate. Removal: by NJC only (security of tenure). Independence of judiciary: security of tenure, adequate remuneration, no political interference, immunity from suits for judicial acts. Functions: interpret law, settle disputes, protect rights, check executive & legislature through judicial review. Rule of law (Dicey: supremacy of law, equality before law, individual rights from court decisions).",tip:"Court hierarchy in Nigeria from highest to lowest and independence of judiciary appear most years."},
+    {t:"Political Parties & Elections",freq:"⚡ Most years",subs:"Political party: definition, functions (political education, recruiting leaders, forming government, aggregating interests, linking government & people), party systems (one-party — Kenya formerly; two-party — USA, UK; multi-party — Nigeria, France). INEC: composition (chairman + 12 resident commissioners), functions (register voters, register parties, conduct elections, declare results, educate voters). Electoral systems: First Past the Post (FPTP — Nigeria), proportional representation (PR), Alternative Vote (AV). Electoral malpractice: ballot snatching, stuffing, manipulation, intimidation, vote-buying, underage voting — causes, effects, solutions. Low voter turnout: causes, solutions.",tip:"Functions of INEC and causes/solutions of electoral malpractice appear almost every year."},
+    {t:"Public Administration",freq:"⚡ Some years",subs:"Civil service vs public service distinction. Civil service: characteristics (permanence/continuity, anonymity, political neutrality, impartiality, bureaucracy), functions (policy advice, policy implementation, record keeping), problems (corruption, red tape, low morale, favouritism, poor funding), reforms (monetisation, privatisation, e-governance, merit-based appointment). Public corporations/parastatals: definition, features (government-owned, public interest, statutory creation, corporate personality, commercial activity), examples (NNPC, NEPA/PHCN, NTA, NRC), advantages, problems (political interference, deficit financing, inefficiency), privatisation & commercialisation — reasons & effects. Local government: 774 LGAs, structure (elected chairman + councillors + secretary + civil servants), functions (primary education, primary healthcare, markets, roads, births & deaths registration), problems (poor funding from FAAC, corruption, political interference, lack of autonomy), reforms.",tip:"Problems of public corporations and local government reforms are favourite structured questions."},
+    {t:"Human Rights & Social Issues",freq:"🔥 Every year",subs:"Universal Declaration of Human Rights (UDHR): adopted December 10, 1948 by UN General Assembly, 30 articles, not legally binding but moral authority. Enforcement in Nigeria: Chapter IV 1999 Constitution, Federal High Court (fundamental rights enforcement procedure). Corruption: definition (abuse of public office for private gain), forms (bribery, embezzlement, fraud, nepotism, cronyism), causes (greed, poverty, weak institutions, impunity), effects (poverty, underdevelopment, inequality, loss of foreign investment), agencies: EFCC (Economic & Financial Crimes Commission — established 2003, prosecutes money laundering, advance fee fraud, financial crimes), ICPC (Independent Corrupt Practices & Other Related Offences Commission — established 2000, public sector corruption). Drug abuse: types, effects, NDLEA. Human trafficking: forms, causes, NAPTIP. Cultism in schools: causes, effects, solutions.",tip:"Causes and effects of corruption + roles of EFCC and ICPC appear every year without fail."},
+    {t:"International Organisations",freq:"⚡ Some years",subs:"United Nations (UN): established 1945, headquarters New York, 193 member states. 6 principal organs: General Assembly (all members), Security Council (15 members — 5 permanent: USA UK France Russia China; 10 rotating), Secretariat (Secretary-General), ICJ (The Hague), ECOSOC, Trusteeship Council (inactive). Specialised agencies: WHO, UNESCO, UNICEF, FAO, ILO, World Bank, IMF. African Union (AU): successor to OAU (1963), established 2002, 55 members, headquarters Addis Ababa, aims (unity, peace, development), organs (Assembly, Commission, Parliament, Court of Justice). ECOWAS: established 1975 (Lagos Treaty), headquarters Abuja, 15 West African states, aims (free movement, common market, monetary union, peace & security), institutions (Authority of Heads of State, Council of Ministers, Parliament, Court of Justice, ECOMOG), achievements, problems. Nigeria's foreign policy: Africa as centrepiece, non-alignment, non-interference, respect for sovereignty, peaceful resolution of disputes, international cooperation.",tip:"ECOWAS aims, institutions, achievements, and problems + Nigeria's foreign policy principles appear most years."},
+  ],
+  biology:[
+    {t:"Cell Biology",freq:"🔥 Every year",subs:"Cell structure — plant vs animal: plant cell has cell wall (cellulose), chloroplasts, large central vacuole, plasmodesmata; animal cell has centrioles, smaller/no vacuole. Cell organelles & functions: nucleus (DNA, controls cell), mitochondria (ATP/energy — respiration), ribosome (protein synthesis), endoplasmic reticulum (smooth — lipids; rough — proteins with ribosomes), Golgi apparatus (modifies/packages proteins), lysosome (digestion — animal cells), chloroplast (photosynthesis), vacuole (storage, turgor), cell membrane (selective permeability). Osmosis (movement of water from high water potential to low through semi-permeable membrane), diffusion (concentration gradient, no energy), active transport (against gradient, requires ATP). Cell division: mitosis (growth & repair — 2 identical diploid cells; PMAT: Prophase, Metaphase, Anaphase, Telophase) vs meiosis (sexual reproduction — 4 haploid cells; 2 divisions; introduces genetic variation through crossing over).",tip:"Differences between plant and animal cells + osmosis definition and experiment appear every year."},
+    {t:"Classification of Living Things",freq:"🔥 Every year",subs:"Characteristics of living things: MRS NERG or MR NIGER D (Movement, Respiration, Sensitivity/irritability, Nutrition, Excretion, Reproduction, Growth, Death). 5 kingdoms: Monera (prokaryotes — bacteria, blue-green algae), Protista (unicellular eukaryotes — amoeba, paramecium, euglena), Fungi (saprophytic/parasitic — mushroom, yeast, moulds, no photosynthesis, chitin cell wall), Plantae (multicellular, photosynthesis, cellulose cell wall), Animalia (multicellular, heterotrophic, no cell wall). Hierarchy: Kingdom → Phylum → Class → Order → Family → Genus → Species. Binomial nomenclature (genus + species, Latin, italicised, genus capitalised). Dichotomous key: construct and use (paired contrasting statements).",tip:"Constructing and using a dichotomous key to classify organisms appears most years."},
+    {t:"Nutrition",freq:"🔥 Every year",subs:"Classes of food: carbohydrates (energy — rice, yam, bread; starch/sugars; deficiency: kwashiorkor in children), proteins (growth & repair — fish, beans, eggs; amino acids; deficiency: kwashiorkor, marasmus), fats/lipids (energy store, insulation, vitamins — palm oil, butter; fatty acids + glycerol), vitamins (A — vision/night blindness; B — beriberi; C — scurvy; D — rickets; K — blood clotting), minerals (calcium — bones/teeth; iron — haemoglobin/anaemia; iodine — goitre), water (transport, reactions, temperature regulation). Food tests: starch — iodine solution (blue-black positive), reducing sugars — Benedict's solution + heat (brick-red/orange positive), protein — biuret reagent/NaOH + CuSO4 (purple positive), fats — ethanol emulsion test (cloudy white positive). Photosynthesis: 6CO2 + 6H2O → C6H12O6 + 6O2 (light energy, chlorophyll). Factors: light intensity, CO2 concentration, temperature, water, chlorophyll. Digestion: enzymes (amylase — starch→maltose; protease/pepsin — protein→peptides→amino acids; lipase — fats→fatty acids+glycerol), absorption in small intestine (villi — large surface area).",tip:"Food tests (reagent + colour change + substance detected) appear EVERY year. Learn all 4 tests perfectly."},
+    {t:"Respiration",freq:"🔥 Every year",subs:"Aerobic respiration: C6H12O6 + 6O2 → 6CO2 + 6H2O + 38 ATP (occurs in mitochondria, complete oxidation). Anaerobic respiration in animals: C6H12O6 → 2C3H6O3 (lactic acid) + 2 ATP. In yeast/plants: C6H12O6 → 2C2H5OH (ethanol) + 2CO2 + 2 ATP (fermentation). Breathing mechanism: inspiration (diaphragm contracts/flattens, intercostal muscles contract, ribcage expands, lung volume increases, pressure decreases — air enters), expiration (reverse). Respiratory organs: human (lungs, alveoli — thin wall, moist surface, good blood supply, large surface area), fish (gills — counter-current flow), insects (tracheal system — spiracles, tracheoles), amphibians (lungs + moist skin). Composition: inhaled air (O2 21%, CO2 0.04%, N2 78%, water vapour varies); exhaled air (O2 16%, CO2 4%, N2 78%, saturated water vapour, warmer). Diseases: asthma (bronchospasm), tuberculosis (TB — Mycobacterium tuberculosis, infectious).",tip:"Differences between aerobic and anaerobic + breathing mechanism with named muscles appear every year."},
+    {t:"Transport in Living Organisms",freq:"⚡ Most years",subs:"Heart: 4 chambers (right atrium, right ventricle, left atrium, left ventricle), valves (tricuspid, bicuspid/mitral, semi-lunar), pacemaker (SAN), double circulation (pulmonary + systemic). Blood vessels: arteries (thick elastic wall, carry oxygenated blood away from heart, high pressure, no valves except aortic), veins (thin wall, carry deoxygenated blood to heart, low pressure, have valves to prevent backflow), capillaries (one cell thick, exchange of gases/nutrients/waste). Blood: red blood cells (erythrocytes — haemoglobin, no nucleus, biconcave), white blood cells (leucocytes — phagocytes + lymphocytes, immune defence), platelets (thrombocytes — clotting), plasma (transport of glucose, amino acids, hormones, CO2, antibodies, urea). Blood groups: ABO system (A — anti-B; B — anti-A; AB — no antibodies, universal recipient; O — both antibodies, universal donor). Rhesus factor. Transport in plants: xylem (water + mineral salts, from roots up, one-directional, dead cells), phloem (sucrose + amino acids, both directions, living cells). Transpiration: loss of water vapour through stomata, creates transpiration pull.",tip:"Heart structure labelled diagram and blood group compatibility (who can donate to whom) appear most years."},
+    {t:"Excretion",freq:"⚡ Most years",subs:"Excretory organs: kidneys (excrete urea + excess water + salts), lungs (excrete CO2 + water vapour), skin (excrete sweat — water, salts, urea), liver (converts excess amino acids to urea — deamination; breaks down RBCs — bile). Kidney structure: cortex (contains glomerulus + Bowman's capsule + PCT + DCT), medulla (collecting ducts + loop of Henle), pelvis (collects urine → ureter → bladder). Nephron process: ultrafiltration (glomerulus → Bowman's capsule — blood pressure forces small molecules out), selective reabsorption (PCT — glucose, amino acids, water, salts reabsorbed back; loop of Henle — water reabsorption; DCT — fine-tuning), remaining = urine (urea, water, salts, creatinine). Kidney failure treatment: dialysis (haemodialysis — blood passed over semi-permeable membrane in dialysis fluid). Excretion in plants: CO2 at night, O2 in light, water vapour, latex, tannins through bark.",tip:"Drawing and labelling a nephron + explaining each stage of urine formation appears most years."},
+    {t:"Genetics & Inheritance",freq:"🔥 Every year",subs:"Gregor Mendel's laws: Law of Dominance (dominant allele masks recessive), Law of Segregation (alleles separate during gamete formation), Law of Independent Assortment (genes on different chromosomes assort independently). Terminology: allele, gene, genotype (genetic makeup — e.g. Tt), phenotype (physical expression — e.g. tall), homozygous (TT or tt), heterozygous (Tt), dominant, recessive, locus, chromosome (diploid 2n, haploid n). Monohybrid cross (one trait): Punnett square, F1 and F2 ratios (3:1 phenotypic, 1:2:1 genotypic). Dihybrid cross (two traits): F2 ratio 9:3:3:1. Codominance (ABO blood groups, sickle cell). Sex determination (XX = female, XY = male). Sex-linked traits (X-linked): colour blindness, haemophilia A — more common in males (XʰY). DNA structure: double helix, deoxyribose sugar + phosphate backbone + nitrogenous bases (A-T, G-C base pairing). Genetic disorders: sickle cell anaemia (HbS — autosomal recessive), Down syndrome (trisomy 21). Mutations.",tip:"Working through Mendelian crosses using Punnett squares and calculating phenotypic ratios appears EVERY year."},
+    {t:"Ecology & Environment",freq:"🔥 Every year",subs:"Ecology: study of organisms and their environment. Ecosystem = biotic (living) + abiotic (non-living — temperature, light, water, soil, pH) components. Producers (autotrophs/plants) → Primary consumers (herbivores) → Secondary consumers (omnivores/carnivores) → Tertiary consumers → Decomposers. Food chains (one pathway), food webs (multiple interconnected food chains). Trophic levels: energy lost (as heat) at each level (≈90% lost, ≈10% transferred — 10% rule). Ecological pyramids: pyramid of numbers (number of organisms), pyramid of biomass (dry mass), pyramid of energy (most accurate). Nutrient cycles: carbon cycle (photosynthesis, respiration, decomposition, combustion, feeding), nitrogen cycle (nitrogen fixation — Rhizobium in root nodules + Azotobacter; nitrification; denitrification; ammonification; assimilation by plants), water cycle (evaporation, transpiration, condensation, precipitation, run-off). Population ecology: population growth (J-shaped = exponential; S-shaped = logistic with carrying capacity), factors limiting population (food, space, predation, disease). Pollution: air (CO, SO2, NO2, CFCs, particulates — causes, effects), water (sewage, oil, pesticides, fertilisers — eutrophication), land/soil (chemicals, plastics). Conservation: in situ (national parks, game reserves), ex situ (zoos, botanical gardens, seed banks).",tip:"Drawing and interpreting food webs + the nitrogen cycle with named bacteria appear almost every year."},
+    {t:"Reproduction",freq:"⚡ Most years",subs:"Asexual reproduction: binary fission (bacteria, amoeba), budding (yeast, hydra), spore formation (fungi, ferns), vegetative propagation (runners — strawberry; rhizomes — ginger; bulbs — onion; corms — cocoyam; tubers — yam; stem cuttings). Advantages: fast, no mate needed. Disadvantages: no genetic variation. Sexual reproduction: involves gametes (meiosis), fertilisation, genetic variation. Human reproductive system: male (testes — sperm production + testosterone, epididymis — maturation, vas deferens, seminal vesicle, prostate, urethra, penis), female (ovaries — eggs + oestrogen/progesterone, fallopian tubes — fertilisation site, uterus — implantation + development, cervix, vagina). Menstrual cycle (28 days): Day 1–5 menstruation, Day 6–13 follicular phase (FSH → Graafian follicle, oestrogen rises), Day 14 ovulation (LH surge), Day 15–28 luteal phase (corpus luteum → progesterone). Fertilisation → zygote → morula → blastocyst → implantation → embryo → foetus. Placenta functions (exchange, hormones, barrier). Reproduction in plants: pollination (self/cross; wind-pollinated vs insect-pollinated — features of each), fertilisation (double fertilisation in angiosperms), seed dispersal (wind, water, animal, self-dispersal/explosive), germination (conditions: water, oxygen, warmth; types: epigeal — cotyledons above soil; hypogeal — below).",tip:"Human reproductive system diagram + menstrual cycle graph + plant pollination features appear most years."},
+    {t:"Evolution & Adaptation",freq:"⚡ Some years",subs:"Darwin's theory of natural selection: variation exists in population → overproduction of offspring → struggle for survival (competition) → survival of the fittest (best-adapted individuals survive and reproduce) → natural selection → change in population over time → evolution of new species. Evidence for evolution: fossil record (progressive changes over time), comparative anatomy (homologous organs — same structure, different function, e.g. human arm/whale flipper/bat wing; analogous organs — different structure, same function), comparative embryology (similar embryonic stages), biochemical evidence (similar DNA/proteins across species), direct observation (antibiotic resistance). Adaptation: structural (e.g. camel — hump for fat/water, wide feet for sand; desert plants — waxy cuticle, reduced leaves, deep roots; fish — streamlined body, gills, fins), behavioural. Variation: continuous (e.g. height, weight — normal distribution curve) vs discontinuous (e.g. blood group, tongue rolling — distinct categories). Speciation: geographic isolation → reproductive isolation → new species.",tip:"Darwin's 5 key points of natural selection and evidence for evolution appear as theory questions most years."},
+  ],
+};
+
+function weekPlan(week){
+  if(week<=24)return[
+    {s:"math",       tp:"Number & Numeration",         k:"Indices, logs, number bases — concepts + 10 practice Qs"},
+    {s:"physics",    tp:week<=12?"Mechanics — Motion":"Forces & Equilibrium", k:week<=12?"Equations of motion + velocity-time graphs":"Moments, levers, pulleys — structured practice"},
+    {s:"chemistry",  tp:week<=12?"Atomic Structure & Periodic Table":"Acids, Bases & Salts", k:week<=12?"Electronic config + periodic trends":"Titration calculations + salt preparation"},
+    {s:"english",    tp:"Comprehension",                k:"Read passage, answer in full sentences — 20 min"},
+    {s:"techDrawing",tp:"Geometric Construction",       k:"Bisect angles + construct regular polygons — 3 exercises"},
+    {s:week<=12?"math":"ict", tp:week<=12?"Algebraic Processes":"Computer Fundamentals", k:week<=12?"Factorisation + simultaneous equations":"Generations, hardware types — theory notes"},
+    {s:"geography",  tp:"Map Reading & Interpretation", k:"Contour interpretation + draw one cross-section"},
+  ];
+  if(week<=48)return[
+    {s:"math",       tp:"Statistics & Probability",    k:"5 past WAEC questions timed — show all working"},
+    {s:"physics",    tp:"Electricity — Circuits",      k:"5 past WAEC Qs timed — Ohm's law + internal resistance"},
+    {s:"chemistry",  tp:"Organic Chemistry",            k:"5 past WAEC Qs timed — IUPAC naming + reactions"},
+    {s:"english",    tp:"Essay Writing",                k:"Write a full essay in 45 min — check structure + word count"},
+    {s:"techDrawing",tp:"Orthographic Projection",      k:"Past WAEC drawing papers — 1st & 3rd angle both"},
+    {s:"ict",        tp:"Number Systems & Data Representation", k:"Past Qs — binary conversions, base changes"},
+    {s:"civic",      tp:"Nigerian Constitution & Government", k:"Past Qs — rights, arms, arms of government"},
+  ];
+  return[
+    {s:"math",       tp:"Geometry & Circle Theorems",  k:"Full mock paper section — timed, mark and review"},
+    {s:"physics",    tp:"Waves & Sound",                k:"Full mock paper — timed"},
+    {s:"chemistry",  tp:"Redox & Electrochemistry",     k:"Weak topic revision — write half-equations from memory"},
+    {s:"english",    tp:"Oral English & Phonology",     k:"Full mock paper — timed"},
+    {s:"techDrawing",tp:"Isometric & Oblique Drawing",  k:"Full past paper — timed"},
+    {s:"biology",    tp:week<=64?"Genetics & Inheritance":"Ecology & Environment", k:week<=64?"Punnett squares + sex-linked crosses — revision":"Food webs + nitrogen cycle — final revision"},
+    {s:"civic",      tp:"Human Rights & Social Issues", k:"Key-facts revision — EFCC, UDHR, fundamental rights"},
+  ];
+}
+
+const SUBJ=[
+  {id:"math",       name:"Mathematics",       target:"A1",    color:"#FF6B35",emoji:"🔢"},
+  {id:"physics",    name:"Physics",           target:"A1",    color:"#4ECDC4",emoji:"⚡"},
+  {id:"chemistry",  name:"Chemistry",         target:"A1",    color:"#45B7D1",emoji:"🧪"},
+  {id:"english",    name:"English Language",  target:"B2",    color:"#96CEB4",emoji:"📝"},
+  {id:"techDrawing",name:"Technical Drawing", target:"A1",    color:"#FFEAA7",emoji:"📐"},
+  {id:"ict",        name:"ICT",               target:"B2",    color:"#DDA0DD",emoji:"💻"},
+  {id:"geography",  name:"Geography",         target:"B2",    color:"#98D8C8",emoji:"🌍"},
+  {id:"civic",      name:"Civic Education",   target:"B3",    color:"#F7DC6F",emoji:"🏛️"},
+  {id:"biology",    name:"Biology/Economics", target:"C4/B3", color:"#82E0AA",emoji:"🌿"},
+];
+
+const PHASES=[
+  {id:1,name:"Foundation",months:"1–6",  weeks:[1,24], color:"#FF6B35",desc:"Build all foundational concepts from zero. Math every day. Science concepts before formulas. Technical Drawing practice starts immediately."},
+  {id:2,name:"Drilling",  months:"7–12", weeks:[25,48],color:"#4ECDC4",desc:"Past WAEC questions only. 5 years of papers per subject. Time yourself every session. Log weak topics and revisit immediately."},
+  {id:3,name:"Exam Mode", months:"13–18",weeks:[49,72],color:"#96CEB4",desc:"Full mock exams weekly. Stop learning new content by Week 64. Only revision and weak-spot drilling until exam day."},
+];
+
+const TOTAL=72;
+const KEY="waec_v3";
+let state={currentWeek:1,completedDays:{},subjectProgress:{},userName:"Student",targetGrade:"",streak:0,lastActiveDate:null};
+let activeTab="week";
+let expandedDay=null;
+let tutorTopic=null;
+
+function loadState(){try{const s=localStorage.getItem(KEY);if(s)state={...state,...JSON.parse(s)};}catch(e){}}
+function saveState(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function getPhase(w){return PHASES.find(p=>w>=p.weeks[0]&&w<=p.weeks[1]);}
+function subjById(id){return SUBJ.find(s=>s.id===id);}
+function getTopicData(sid,tname){const arr=TOPICS[sid]||[];return arr.find(t=>t.t===tname)||arr[0]||null;}
+
+function showToast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg;t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"),1800);
+}
+
+function updateHeader(){
+  const p=getPhase(state.currentWeek);
+  const pct=Math.round((state.currentWeek/TOTAL)*100);
+  const ts=Object.values(state.subjectProgress).reduce((a,b)=>a+b,0);
+  document.getElementById("hw").innerHTML=`Week ${state.currentWeek} <span style="color:${p.color};font-size:14px;font-weight:500">/ ${TOTAL}</span>`;
+  const pb=document.getElementById("pb");
+  pb.style.background=p.color+"22";pb.style.border=`1px solid ${p.color}44`;
+  document.getElementById("pbl").style.color=p.color;
+  document.getElementById("pbl").textContent=`Phase ${p.id}`;
+  document.getElementById("pbn").textContent=p.name;
+  document.getElementById("opct").textContent=`${pct}% complete`;
+  document.getElementById("tsess").textContent=`${ts} sessions done`;
+  const bar=document.getElementById("obar");
+  bar.style.width=`${pct}%`;
+  bar.style.background=`linear-gradient(90deg,${p.color},${p.color}88)`;
+  const pfBtn=document.getElementById("profile-btn");
+  if(pfBtn)pfBtn.textContent=initials(state.userName);
+}
+
+function switchTab(tab){
+  activeTab=tab;expandedDay=null;
+  ["week","subjects","phases","tutor"].forEach(t=>{
+    const btn=document.getElementById(`tab-${t}`);
+    const p=getPhase(state.currentWeek);
+    btn.style.background=t===tab?p.color:"#1E1E2E";
+    btn.style.color=t===tab?"#000":"#666";
+  });
+  renderContent();
+}
+
+function renderWeek(){
+  const p=getPhase(state.currentWeek);
+  const days=weekPlan(state.currentWeek);
+  const dc=days.filter((_,i)=>state.completedDays[`${state.currentWeek}-${i}`]).length;
+  let h=`<div class="wcard"><div class="wcard-lbl">This week's focus</div><div class="wcard-desc">${p.desc} — Months ${p.months}</div><div class="wmini-bar"><div class="wmini-fill" style="width:${(dc/days.length)*100}%;background:${p.color}"></div></div><div class="wmini-lbl">${dc}/${days.length} sessions done · Tap a card to see WAEC topics</div></div>`;
+  days.forEach((day,i)=>{
+    const subj=subjById(day.s);
+    const isDone=!!state.completedDays[`${state.currentWeek}-${i}`];
+    const isEx=expandedDay===i;
+    const td=getTopicData(day.s,day.tp);
+    h+=`<div class="dcard ${isDone?'done':''}" style="border-color:${isDone?subj.color+'44':'#1E1E2E'}">
+      <div class="dcard-main" onclick="toggleExpand(${i})">
+        <div class="dicon" style="background:${subj.color}22">${isDone?'✅':subj.emoji}</div>
+        <div style="flex:1;min-width:0">
+          <div class="dname" style="color:${isDone?'#555':'#E8E8F0'}">${subj.name} <span class="dtopic" style="color:${subj.color}">· ${day.tp}</span></div>
+          <div class="dtask ${isDone?'sk':''}">${day.k}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0">
+          <div class="dtarget" style="background:${subj.color}22;color:${subj.color}">${subj.target}</div>
+          <div class="darrow">${isEx?'▲':'▼'}</div>
+        </div>
+      </div>
+      ${isEx&&td?`<div class="drawer"><div class="drawer-inner">
+        <div class="drawer-section">
+          <div class="drawer-lbl">📌 What to study — real WAEC topics</div>
+          <div style="margin-bottom:8px">${td.subs.split(', ').slice(0,8).map(s=>`<span class="topic-pill" style="background:${subj.color}15;color:${subj.color}cc;border:1px solid ${subj.color}30">${s.trim()}</span>`).join('')}</div>
+          <span class="freq-badge" style="background:${subj.color}20;color:${subj.color};border-color:${subj.color}44">${td.freq}</span>
+        </div>
+        <div class="drawer-section">
+          <div class="drawer-lbl">💡 Exam Tip</div>
+          <div class="tips-text">${td.tip}</div>
+        </div>
+        <button class="mark-btn" style="background:${isDone?'#1E1E2E':subj.color};color:${isDone?'#555':'#000'}" onclick="markDone(${i})">${isDone?'✓ Done — tap to undo':'✅ Mark Session Done'}</button>
+          <button class="mark-btn" style="background:transparent;color:${subj.color};border:1px solid ${subj.color}44;margin-top:8px;" onclick="openTutor('${day.s}','${day.tp}')">🤖 Teach Me Step-by-Step</button>
+      </div></div>`:''}
+    </div>`;
+  });
+  const can=state.currentWeek<TOTAL;
+  h+=`<button class="adv-btn" style="background:${can?`linear-gradient(135deg,${p.color},${p.color}88)`:'#1E1E2E'};color:${can?'#000':'#555'};cursor:${can?'pointer':'default'}" onclick="${can?'advanceWeek()':''}">${can?`Complete Week ${state.currentWeek} → Week ${state.currentWeek+1}`:'🎉 All 72 Weeks Done!'}</button>`;
+  return h;
+}
+
+function renderSubjects(){
+  let h=`<div class="shint">🎯 These are the topics that appear most in real WAEC exams — verified from past papers.<br>🔥 = every year &nbsp;⚡ = most years<br>Tap <strong>+</strong> after each study session to log progress.</div>`;
+  SUBJ.forEach(subj=>{
+    const sess=state.subjectProgress[subj.id]||0;
+    const pct=Math.min((sess/80)*100,100);
+    const topics=TOPICS[subj.id]||[];
+    h+=`<div class="scard"><div class="scard-top">
+      <div class="srow">
+        <div class="sleft"><span class="semoji">${subj.emoji}</span><div><div class="sname">${subj.name}</div><div class="ssess">${sess} sessions logged</div></div></div>
+        <div class="sright"><span class="starget" style="background:${subj.color}22;color:${subj.color}">${subj.target}</span><button class="splus" style="background:${subj.color}22;color:${subj.color};border:1px solid ${subj.color}44" onclick="logSession('${subj.id}')">+</button></div>
+      </div>
+      <div class="sbar-bg"><div class="sbar-fill" style="width:${pct}%;background:${subj.color}"></div></div>
+    </div>
+    <div class="stopics"><div class="stopics-lbl">High-frequency WAEC topics</div>
+    ${topics.map(tp=>`<div class="htopic">
+      <div class="htopic-row"><div class="htopic-name">${tp.t}</div><span class="hfreq" style="background:${subj.color}20;color:${subj.color}">${tp.freq.split(' ')[0]}</span></div>
+      <div class="htopic-sub">${tp.subs.length>200?tp.subs.substring(0,200)+'…':tp.subs}</div>
+      <div class="htip" style="color:${subj.color}99">💡 ${tp.tip}</div>
+          <button onclick="openTutor('${subj.id}','${tp.t}')" style="background:transparent;border:none;color:${subj.color};font-size:10px;font-weight:700;padding:5px 0;cursor:pointer;text-transform:uppercase;letter-spacing:1px;">🤖 AI Tutor: Start Lesson →</button>
+    </div>`).join('')}
+    </div></div>`;
+  });
+  return h;
+}
+
+function renderPhases(){
+  let h="";
+  PHASES.forEach(p=>{
+    const isA=state.currentWeek>=p.weeks[0]&&state.currentWeek<=p.weeks[1];
+    const isDone=state.currentWeek>p.weeks[1];
+    h+=`<div class="phcard" style="border-color:${isA?p.color+'55':'#1E1E2E'}">${isA?`<div class="phbar" style="background:${p.color}"></div>`:''}
+      <div class="phstatus" style="color:${p.color}">${isDone?'✓ Complete':isA?'● Active':'Upcoming'}</div>
+      <div class="phtitle">Phase ${p.id}: ${p.name}</div>
+      <div class="phdates">Months ${p.months} · Weeks ${p.weeks[0]}–${p.weeks[1]}</div>
+      <div class="phdesc">${p.desc}</div>
+      ${isA?`<div class="phhere" style="background:${p.color}15;color:${p.color}">You are here — Week ${state.currentWeek} of ${p.weeks[1]}</div>`:''}
+    </div>`;
+  });
+  h+=`<div class="nncard"><div class="nntitle">📌 Daily Non-Negotiables</div>
+  ${[["🔢","Math every single day","Not sometimes. Every day. No exceptions ever."],
+     ["📝","English 20 min daily","Read anything in English. Active reading, not passive."],
+     ["📐","Tech Drawing 3x/week","You need physical reps with instruments. Cannot shortcut this."],
+     ["⏱️","Always time yourself","WAEC is strict on time. Build the habit from Week 1."],
+     ["📋","Write out every mistake","Don't just circle it. Write the full correct working. That's how you fix it."],
+     ["🔥","Use real past WAEC papers","Not random questions. Actual past WAEC papers from actual exams."],
+  ].map(([e,n,r])=>`<div class="nnrow"><span style="font-size:18px">${e}</span><div><div class="nnname">${n}</div><div class="nnrule">${r}</div></div></div>`).join('')}
+  </div>`;
+  return h;
+}
+
+function renderContent(){
+  const c=document.getElementById("content");
+  if(activeTab==="week")c.innerHTML=renderWeek();
+  else if(activeTab==="subjects")c.innerHTML=renderSubjects();
+  else if(activeTab==="phases")c.innerHTML=renderPhases();
+  else c.innerHTML=renderTutorTab();
+}
+
+function renderTutorTab(){
+  let h=`<div class="shint">🤖 <strong>AI Tutor Mode</strong><br>Select any topic below to start a step-by-step beginner lesson. I'll break it down so it's easy to understand.</div>`;
+  SUBJ.forEach(subj=>{
+    const topics=TOPICS[subj.id]||[];
+    h+=`<div class="scard" style="border-left:4px solid ${subj.color}">
+      <div class="scard-top" style="padding:12px 14px;">
+        <div class="srow" style="margin-bottom:0;">
+          <div class="sleft"><span class="semoji">${subj.emoji}</span><div class="sname">${subj.name}</div></div>
+        </div>
+      </div>
+      <div style="padding:0 14px 14px;">
+        ${topics.map(tp=>`<div onclick="openTutor('${subj.id}','${tp.t}')" style="background:#1A1A28;padding:10px;border-radius:8px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;">
+          <div style="font-size:12px;font-weight:500;">${tp.t}</div>
+          <div style="font-size:10px;color:${subj.color};font-weight:700;">TEACH ME →</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  });
+  return h;
+}
+
+function openTutor(sid, tname){
+  const subj = subjById(sid);
+  const td = getTopicData(sid, tname);
+  if(!td) return;
+  
+  tutorTopic = {sid, ...td};
+  const modal = document.getElementById("tutor-modal");
+  const title = document.getElementById("tutor-title");
+  const content = document.getElementById("tutor-content");
+  
+  title.innerHTML = `<span style="color:${subj.color}">${subj.emoji} ${tname}</span>`;
+  
+  const steps = td.subs.split(',').map(s => s.trim());
+  
+  content.innerHTML = `
+    <div style="background:${subj.color}15;border:1px solid ${subj.color}33;padding:15px;border-radius:12px;margin-bottom:20px;">
+      <div style="font-size:11px;color:${subj.color};text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;font-weight:700;">The Big Picture</div>
+      <div style="font-size:14px;line-height:1.6;color:#E8E8F0;">
+        "Hey! Let's master <strong>${tname}</strong>. This topic is ${td.freq.toLowerCase()}. 
+        Don't worry if it seems hard—we'll take it one small step at a time."
+      </div>
+    </div>
+    
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;color:#444;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;font-weight:700;">Step-by-Step Roadmap</div>
+      ${steps.map((step, i) => `
+        <div style="display:flex;gap:12px;margin-bottom:15px;background:#12121A;padding:12px;border-radius:10px;border:1px solid #1E1E2E;">
+          <div style="width:24px;height:24px;background:${subj.color};color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;">${i+1}</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;">${step}</div>
+            <div style="font-size:11px;color:#777;line-height:1.4;">Focus on understanding the core logic here before moving to the next step.</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div style="background:#1E1E2E;padding:15px;border-radius:12px;margin-bottom:20px;border-left:4px solid #FFD700;">
+      <div style="font-size:11px;color:#FFD700;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;font-weight:700;">💡 Pro Exam Tip</div>
+      <div style="font-size:12px;line-height:1.6;color:#ccc;">${td.tip}</div>
+    </div>
+
+    <div style="background:#0A0A0F;border:1px solid #1E1E2E;padding:15px;border-radius:12px;margin-bottom:80px;">
+      <div style="font-size:11px;color:#444;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-weight:700;">Beginner Practice Task</div>
+      <div style="font-size:13px;color:#E8E8F0;margin-bottom:10px;">Go to your textbook and solve <strong>3 simple examples</strong> of "${steps[0]}".</div>
+      <div style="font-size:11px;color:#555;">Once you get those right, you've officially started! Move to step 2.</div>
+    </div>
+  `;
+  
+  modal.style.display = "block";
+  document.body.style.overflow = "hidden";
+}
+
+function closeTutor(){
+  document.getElementById("tutor-modal").style.display = "none";
+  document.body.style.overflow = "auto";
+}
+
+function render(){updateHeader();switchTab(activeTab);}
+function toggleExpand(i){expandedDay=expandedDay===i?null:i;renderContent();}
+function markDone(i){
+  const key=`${state.currentWeek}-${i}`;
+  state.completedDays[key]=!state.completedDays[key];
+  const days=weekPlan(state.currentWeek);
+  const subj=subjById(days[i].s);
+  if(state.completedDays[key]){showToast(`${subj.emoji} ${days[i].tp} done!`);recordActivity();}
+  saveState();expandedDay=null;render();
+}
+function logSession(id){
+  state.subjectProgress[id]=(state.subjectProgress[id]||0)+1;
+  const subj=subjById(id);showToast(`${subj.emoji} Session logged!`);
+  recordActivity();saveState();renderContent();
+}
+function advanceWeek(){
+  if(state.currentWeek>=TOTAL)return;
+  state.currentWeek++;expandedDay=null;
+  showToast(`🚀 Week ${state.currentWeek} unlocked!`);
+  saveState();render();
+}
+
+const SW=`const C='waec-v5';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./'])));self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))));self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('./'))));});`;
+if('serviceWorker'in navigator){try{const b=new Blob([SW],{type:'application/javascript'});navigator.serviceWorker.register(URL.createObjectURL(b)).catch(()=>{});}catch(e){}}
+let dp=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;document.getElementById('ibanner').style.display='block';});
+document.getElementById('ibtn').addEventListener('click',()=>{if(dp){dp.prompt();dp.userChoice.then(()=>{dp=null;document.getElementById('ibanner').style.display='none';});}});
+
+/* ===== Profile Logic ===== */
+const ACHIEVEMENTS=[
+  {icon:"🌱",title:"First Step",desc:"Complete your first session",test:s=>totalSessions(s)>=1},
+  {icon:"🔥",title:"7-Day Streak",desc:"Study 7 days in a row",test:s=>(s.streak||0)>=7},
+  {icon:"📅",title:"Week Warrior",desc:"Fully complete any week",test:s=>{for(let w=1;w<=state.currentWeek;w++){const d=weekPlan(w);if(d.length&&d.every((_,i)=>s.completedDays[`${w}-${i}`]))return true;}return false;}},
+  {icon:"🚀",title:"Phase 1 Complete",desc:"Reach Week 25 — Foundation done",test:s=>s.currentWeek>=25},
+  {icon:"💯",title:"Halfway Hero",desc:"Reach Week 36 — the midpoint",test:s=>s.currentWeek>=36},
+  {icon:"🎯",title:"All-Rounder",desc:"Log a session in every subject",test:s=>SUBJ.every(sub=>(s.subjectProgress[sub.id]||0)>=1)},
+  {icon:"🏆",title:"Century Club",desc:"Log 100 total sessions",test:s=>totalSessions(s)>=100},
+  {icon:"🌟",title:"Finisher",desc:"Complete all 72 weeks",test:s=>s.currentWeek>=TOTAL},
+];
+function totalSessions(s){return Object.values(s.subjectProgress).reduce((a,b)=>a+b,0);}
+function subjMastery(id){
+  const sessions=state.subjectProgress[id]||0;
+  const topics=(TOPICS[id]||[]).length||1;
+  const targetSessions=topics*3;
+  return Math.min(100,Math.round((sessions/targetSessions)*100));
+}
+function initials(name){
+  const parts=(name||"").trim().split(/\s+/).filter(Boolean);
+  if(!parts.length)return "S";
+  return parts.slice(0,2).map(w=>w[0].toUpperCase()).join('');
+}
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function recordActivity(){
+  const today=todayStr();
+  if(state.lastActiveDate===today)return;
+  const y=new Date();y.setDate(y.getDate()-1);
+  const yesterday=y.toISOString().slice(0,10);
+  state.streak=(state.lastActiveDate===yesterday)?(state.streak||0)+1:1;
+  state.lastActiveDate=today;
+}
+function updateName(val){
+  state.userName=val||"Student";saveState();updateHeader();
+  const av=document.getElementById("pf-avatar");
+  if(av)av.textContent=initials(state.userName);
+}
+function updateGrade(val){state.targetGrade=val;saveState();}
+function resetProgress(){
+  if(!confirm("Reset all progress? This clears your week, sessions, streak and completed days. Your name and target grade stay. This can't be undone."))return;
+  state={...state,currentWeek:1,completedDays:{},subjectProgress:{},streak:0,lastActiveDate:null};
+  saveState();
+  closeProfile();
+  expandedDay=null;
+  render();
+  showToast("🔄 Progress reset");
+}
+function openProfile(){
+  renderProfile();
+  document.getElementById("profile-modal").style.display="block";
+  document.body.style.overflow="hidden";
+}
+function closeProfile(){
+  document.getElementById("profile-modal").style.display="none";
+  document.body.style.overflow="auto";
+}
+function renderProfile(){
+  const pct=Math.round((state.currentWeek/TOTAL)*100);
+  const sessions=totalSessions(state);
+  const daysDone=Object.values(state.completedDays).filter(Boolean).length;
+  const unlockedCount=ACHIEVEMENTS.filter(a=>a.test(state)).length;
+
+  let h=`
+  <div class="pf-head">
+    <div class="pf-avatar" id="pf-avatar">${initials(state.userName)}</div>
+    <div style="flex:1;min-width:0">
+      <input class="pf-input" id="pf-name" value="${(state.userName||"").replace(/"/g,'&quot;')}" placeholder="Your name" onchange="updateName(this.value)">
+      <input class="pf-grade-input" id="pf-grade" value="${(state.targetGrade||"").replace(/"/g,'&quot;')}" placeholder="🎯 Set your target (e.g. 8 A1s)" onchange="updateGrade(this.value)">
+    </div>
+  </div>
+
+  <div class="pf-section-lbl">Overall Progress</div>
+  <div class="pstat-grid">
+    <div class="pstat-card"><div class="pstat-val">🔥 ${state.streak||0}</div><div class="pstat-lbl">Day streak</div></div>
+    <div class="pstat-card"><div class="pstat-val">${sessions}</div><div class="pstat-lbl">Sessions logged</div></div>
+    <div class="pstat-card"><div class="pstat-val">${pct}%</div><div class="pstat-lbl">Plan complete · Week ${state.currentWeek}/${TOTAL}</div></div>
+    <div class="pstat-card"><div class="pstat-val">${daysDone}</div><div class="pstat-lbl">Study days ticked off</div></div>
+  </div>
+
+  <div class="pf-section-lbl">Subject Mastery</div>
+  ${SUBJ.map(sub=>{
+    const m=subjMastery(sub.id);
+    const s=state.subjectProgress[sub.id]||0;
+    return `<div class="pmastery-row">
+      <div class="pmastery-top">
+        <div class="pmastery-name">${sub.emoji} ${sub.name} <span style="font-size:9px;color:${sub.color};border:1px solid ${sub.color}44;background:${sub.color}15;padding:2px 6px;border-radius:6px;">Target ${sub.target}</span></div>
+        <div class="pmastery-pct" style="color:${sub.color}">${m}%</div>
+      </div>
+      <div class="pmastery-bar-bg"><div class="pmastery-bar-fill" style="width:${m}%;background:${sub.color}"></div></div>
+      <div class="pmastery-sub">${s} session${s===1?'':'s'} logged</div>
+    </div>`;
+  }).join('')}
+
+  <div class="pf-section-lbl">Achievements · ${unlockedCount}/${ACHIEVEMENTS.length}</div>
+  <div class="badge-grid">
+    ${ACHIEVEMENTS.map(a=>{
+      const unlocked=a.test(state);
+      return `<div class="badge-tile ${unlocked?'unlocked':''}">
+        <div class="badge-icon">${a.icon}</div>
+        <div class="badge-title">${a.title}</div>
+        <div class="badge-desc">${a.desc}</div>
+      </div>`;
+    }).join('')}
+  </div>
+
+  <div class="pf-section-lbl">Danger Zone</div>
+  <button class="pf-reset-btn" onclick="resetProgress()">🗑️ Reset All Progress</button>
+  `;
+  document.getElementById("profile-content").innerHTML=h;
+}
+
+loadState();render();
+
+/* ===== Loading Screen Logic ===== */
+(function(){
+  const quotes=[
+    "Excellence is a habit, not an act.",
+    "Every topic mastered is a step closer to your A1.",
+    "Discipline today. Success on results day."
+  ];
+  const qEl=document.getElementById("ld-quote");
+  let qi=0;
+  function showQuote(i){
+    qEl.style.animation="none";
+    qEl.offsetHeight; /* reflow to restart animation */
+    qEl.textContent=quotes[i];
+    qEl.style.animation="ldQuoteFade 1s ease forwards";
+  }
+  showQuote(0);
+  const qTimer=setInterval(()=>{
+    qi=(qi+1)%quotes.length;
+    showQuote(qi);
+  },1000);
+  setTimeout(()=>{
+    clearInterval(qTimer);
+    const loader=document.getElementById("loader");
+    loader.classList.add("hide");
+    setTimeout(()=>{loader.remove();},550);
+  },3000);
+})();
+</script>
+</body>
+</html>
